@@ -1,5 +1,6 @@
 from datasets import load_dataset
 
+
 class InstructionSet:
     """
     An instruction set is a collection of instructions and responses that is used to instruction finetune an LM.
@@ -26,12 +27,14 @@ class InstructionSet:
 
         self.instruction_prefix = instruction_prefix
         self.response_prefix = response_prefix
-        
-        #TODO refactor for larger datasets when TRL formatting_func is fixed
-        
-        text_column = [self.instruction_prefix + str(a) + " " + self.response_prefix + str(b) for a, b in zip(self.dataset["instruction"], self.dataset["response"])]
+
+        # TODO refactor for larger datasets when TRL formatting_func is fixed
+
+        text_column = [
+            self.instruction_prefix + str(a) + " " + self.response_prefix + str(b)
+            for a, b in zip(self.dataset["instruction"], self.dataset["response"])
+        ]
         self.dataset = self.dataset.add_column("text", text_column)
-        
 
     def __len__(self):
         return len(self.dataset)

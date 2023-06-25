@@ -16,13 +16,16 @@ default_system_prompt = "You are the worlds best \
                         variations of and you will be asked \
                         to generate variations of the instrcution."
 
+
 def postprocess_variations(variation_response):
     # sometimes openai comes back with newlines even though it's been prompted not to
     variation_response = variation_response.replace("\n", "")
 
     return variation_response
 
+
 lock = threading.Lock()
+
 
 def generate_variations(
     chat,
@@ -34,8 +37,7 @@ def generate_variations(
     writer,
 ):
     example_samples_index = [
-        randint(0, len(instruction_set) - 1)
-        for p in range(0, num_context_examples)
+        randint(0, len(instruction_set) - 1) for p in range(0, num_context_examples)
     ]
     example_samples = [instruction_set[i] for i in example_samples_index]
 
@@ -72,6 +74,7 @@ def generate_variations(
             # avoid null variations
             if len(variation) > 0:
                 writer.writerow([variation, response])
+
 
 def generate_with_fixed_response(
     instruction_set: InstructionSet,
@@ -113,13 +116,24 @@ def generate_with_fixed_response(
         raise TypeError(
             f"Expected `InstructionSet` but got `{type(instruction_set).__name__}` instead."
         )
-        
-    with open(output_file, 'w', newline='') as file:
-        writer = csv.writer(file, quoting=csv.QUOTE_ALL, quotechar='"', doublequote=True)
-        writer.writerow(['instruction', 'response'])
+
+    with open(output_file, "w", newline="") as file:
+        writer = csv.writer(
+            file, quoting=csv.QUOTE_ALL, quotechar='"', doublequote=True
+        )
+        writer.writerow(["instruction", "response"])
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=parallelism) as executor:
             with tqdm(total=len(instruction_set)) as pbar:
                 for i in range(len(instruction_set)):
-                    executor.submit(generate_variations, chat, instruction_set, i, num_variations, num_context_examples, system_prompt, writer)
+                    executor.submit(
+                        generate_variations,
+                        chat,
+                        instruction_set,
+                        i,
+                        num_variations,
+                        num_context_examples,
+                        system_prompt,
+                        writer,
+                    )
                     pbar.update()
