@@ -1,6 +1,6 @@
 # Arcee
 
-The toolkit for finetuning and deploying large language models
+The open source toolkit for finetuning and deploying LLMs
 
 ### Finetune LLMS
 
