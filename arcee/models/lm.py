@@ -2,17 +2,14 @@ from datasets import load_dataset
 from trl import SFTTrainer
 from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
 from peft import LoraConfig
-from arcee.data import PromptSet
 from arcee.data import InstructionSet
 
 question_prompt = "### Question: "
 answer_prompt = "### Answer: "
 
-
 def formatting_prompts_func(example):
     text = f"{question_prompt} {example['instruction']} {answer_prompt} {example['response']}"
     return text
-
 
 class LM:
     """General language model class"""
@@ -31,9 +28,16 @@ class LM:
         self.model = AutoModelForCausalLM.from_pretrained(name)
 
         self.tokenizer = AutoTokenizer.from_pretrained(name)
+        eos_token_id = self.tokenizer.eos_token_id
+        self.eos_token = self.tokenizer.decode([eos_token_id])
 
-    def train(self, dataset_path, epochs=3, peft=False, output_dir=None):
+    def train(self, dataset_path, epochs=10, peft=False, output_dir=None, batch_size=8):
         instruction_set = InstructionSet(dataset_path)
+        #set instruction set for decoding
+        
+        #TODO: refactor for reloading
+        self.instruction_set = instruction_set
+        
         print("Number of training examples: " + str(len(instruction_set.dataset)))
 
         # prompt_set = PromptSet(dataset)
@@ -45,7 +49,10 @@ class LM:
 
         training_args = TrainingArguments(
             num_train_epochs=epochs,
+            # max_steps=max_steps,
             output_dir=output_dir,
+            per_device_train_batch_size=batch_size,
+            evaluation_strategy="epoch"
         )
 
         if peft:
@@ -53,26 +60,26 @@ class LM:
             self.trainer = SFTTrainer(
                 self.model,
                 args=training_args,
-                train_dataset=instruction_set.dataset,
+                train_dataset=instruction_set.train_dataset,
+                eval_dataset=instruction_set.val_dataset,
                 dataset_text_field="text",
-                max_seq_length=32,
                 peft_config=self.peft_config,
-                packing=False,
+                packing=True,
             )
         else:
             self.trainer = SFTTrainer(
                 self.model,
                 args=training_args,
                 train_dataset=instruction_set.dataset,
+                eval_dataset=instruction_set.val_dataset,
                 dataset_text_field="text",
-                max_seq_length=32,
-                packing=False
-                # formatting_func=formatting_prompts_func,
-                # peft_config=self.peft_config,
-                # packing=True,
+                packing=True,
             )
 
         self.trainer.train()
+        
+    def postprocess_prediction(self, prediction):
+        return prediction.split(self.instruction_set.response_prefix)[1].replace(self.eos_token, "").strip()
 
     def predict(self, prompt, max_length=100, min_length=50, temperature=0.1):
         prompt = f"{question_prompt} {prompt}"
@@ -86,4 +93,7 @@ class LM:
         prediction = self.tokenizer.decode(outputs[0])
         # find text between answer prompt and <|endoftext|>
         # answer = generation.split(answer_prompt)[1].replace("<|endoftext|>", "").strip()
-        return prediction
+        try:
+            return self.postprocess_prediction(prediction)
+        except:
+            return prediction

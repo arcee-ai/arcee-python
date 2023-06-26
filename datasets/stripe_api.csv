@@ -1,4 +1,4 @@
-question,response
+instruction,response
 "Send a payout of 5000 USD to my bank","{""url"": ""https://api.stripe.com/v1/payouts"", ""method"": ""POST"", ""data"": {""amount"": 5000, ""currency"": ""usd""}}"
 "Can I payout 200 GBP?","{""url"": ""https://api.stripe.com/v1/payouts"", ""method"": ""POST"", ""data"": {""amount"": 200, ""currency"": ""gbp""}}"
 "How to distribute 1200 EUR through Stripe?","{""url"": ""https://api.stripe.com/v1/payouts"", ""method"": ""POST"", ""data"": {""amount"": 1200, ""currency"": ""eur""}}"

@@ -1,7 +1,6 @@
 import threading
 import concurrent.futures
 import os
-from arcee.data import PromptSet
 from random import randint
 from tqdm import tqdm
 from langchain.chat_models import ChatOpenAI
