@@ -1,6 +1,6 @@
 # Arcee
 
-The open source toolkit for finetuning and deploying LLMs :lotus:
+:tulip:	The open source toolkit for finetuning and deploying LLMs :tulip:
 
 ### Finetune LLMS
 
