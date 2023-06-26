@@ -1,8 +1,10 @@
 from datasets import load_dataset
 
-#reproducable dataset splits
+# reproducable dataset splits
 import random
-random.seed(777) 
+
+random.seed(777)
+
 
 class InstructionSet:
     """
@@ -38,13 +40,14 @@ class InstructionSet:
             for a, b in zip(self.dataset["instruction"], self.dataset["response"])
         ]
         self.dataset = self.dataset.add_column("text", text_column)
-        
-        train_test_split_ratio = 0.2
-        dataset_train_val = self.dataset.train_test_split(test_size=train_test_split_ratio)
-        
-        self.train_dataset = dataset_train_val['train']
-        self.val_dataset = dataset_train_val["test"]
 
+        train_test_split_ratio = 0.2
+        dataset_train_val = self.dataset.train_test_split(
+            test_size=train_test_split_ratio
+        )
+
+        self.train_dataset = dataset_train_val["train"]
+        self.val_dataset = dataset_train_val["test"]
 
     def __len__(self):
         return len(self.dataset)

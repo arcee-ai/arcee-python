@@ -7,9 +7,11 @@ from arcee.data import InstructionSet
 question_prompt = "### Question: "
 answer_prompt = "### Answer: "
 
+
 def formatting_prompts_func(example):
     text = f"{question_prompt} {example['instruction']} {answer_prompt} {example['response']}"
     return text
+
 
 class LM:
     """General language model class"""
@@ -33,11 +35,11 @@ class LM:
 
     def train(self, dataset_path, epochs=10, peft=False, output_dir=None, batch_size=8):
         instruction_set = InstructionSet(dataset_path)
-        #set instruction set for decoding
-        
-        #TODO: refactor for reloading
+        # set instruction set for decoding
+
+        # TODO: refactor for reloading
         self.instruction_set = instruction_set
-        
+
         print("Number of training examples: " + str(len(instruction_set.dataset)))
 
         # prompt_set = PromptSet(dataset)
@@ -52,7 +54,7 @@ class LM:
             # max_steps=max_steps,
             output_dir=output_dir,
             per_device_train_batch_size=batch_size,
-            evaluation_strategy="epoch"
+            evaluation_strategy="epoch",
         )
 
         if peft:
@@ -77,9 +79,13 @@ class LM:
             )
 
         self.trainer.train()
-        
+
     def postprocess_prediction(self, prediction):
-        return prediction.split(self.instruction_set.response_prefix)[1].replace(self.eos_token, "").strip()
+        return (
+            prediction.split(self.instruction_set.response_prefix)[1]
+            .replace(self.eos_token, "")
+            .strip()
+        )
 
     def predict(self, prompt, max_length=100, min_length=50, temperature=0.1):
         prompt = f"{question_prompt} {prompt}"
