@@ -8,6 +8,6 @@ style:
 
 publish:
 	rm -rf build dist
-	python setup.py sdist bdist_wheel
+	python3 setup.py sdist bdist_wheel
 	twine check dist/*
 	twine upload dist/* -u ${PYPI_USERNAME} -p ${PYPI_PASSWORD} --verbose 
