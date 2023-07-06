@@ -9,7 +9,9 @@ answer_prompt = "### Answer: "
 
 
 def formatting_prompts_func(example):
-    text = f"{question_prompt} {example['instruction']} {answer_prompt} {example['response']}"
+    text = (
+        f"{question_prompt} {example['prompt']} {answer_prompt} {example['completion']}"
+    )
     return text
 
 

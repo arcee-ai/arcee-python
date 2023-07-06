@@ -24,10 +24,10 @@ class InstructionSet:
         dataset_fields = list(self.dataset.features.keys())
         self.dataset_fields = dataset_fields
 
-        if "instruction" not in dataset_fields:
+        if "prompt" not in dataset_fields:
             raise (Exception("Datafile must contain a column named 'instruction'"))
 
-        if "response" not in dataset_fields:
+        if "completion" not in dataset_fields:
             raise (Exception("Datafile must contain a column named 'response'"))
 
         self.instruction_prefix = instruction_prefix
@@ -37,7 +37,7 @@ class InstructionSet:
 
         text_column = [
             self.instruction_prefix + str(a) + " " + self.response_prefix + str(b)
-            for a, b in zip(self.dataset["instruction"], self.dataset["response"])
+            for a, b in zip(self.dataset["prompt"], self.dataset["completion"])
         ]
         self.dataset = self.dataset.add_column("text", text_column)
 
@@ -57,11 +57,11 @@ class InstructionSet:
         This function formats an entry as it will appear during finetuning
         """
 
-        return f"{self.instruction_prefix} {self.dataset[idx]['instruction']} {self.response_prefix} {self.dataset[idx]['response']}"
+        return f"{self.instruction_prefix} {self.dataset[idx]['prompt']} {self.response_prefix} {self.dataset[idx]['completion']}"
 
     def formatting_prompts_func(self, example):
         """
         This function takes a dataset example and formats it into a prompt for finetuning.
         """
 
-        return f"{self.instruction_prefix} {example['instruction']} {self.response_prefix} {example['response']}"
+        return f"{self.instruction_prefix} {example['prompt']} {self.response_prefix} {example['completion']}"
