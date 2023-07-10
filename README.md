@@ -80,7 +80,7 @@ Arcee offers a platform for managing your proprietary language models in product
 
 ### Authenticaiton
 
-To use the arcee platform, visit app.arcee.com/api-settings and `export ARCEE_API_KEY=*******" in your environment.
+To use the arcee platform, visit https://app.arcee.com/api-settings and `export ARCEE_API_KEY=*******` in your environment.
 
 ### Dataset Managemnt
 
