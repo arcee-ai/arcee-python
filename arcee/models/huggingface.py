@@ -6,7 +6,7 @@ from peft import LoraConfig
 from arcee.data import InstructionSet
 from arcee.models.lm import LM
 
-class HFLM(LM):
+class HuggingFaceLM(LM):
     """HuggingFace-based language model class"""
 
     def __init__(self, model_name: str, peft_config: LoraConfig = None):
