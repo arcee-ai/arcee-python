@@ -1,4 +1,7 @@
 from datasets import load_dataset
+import os
+import requests
+import json
 
 # reproducable dataset splits
 import random
@@ -25,10 +28,10 @@ class InstructionSet:
         self.dataset_fields = dataset_fields
 
         if "prompt" not in dataset_fields:
-            raise (Exception("Datafile must contain a column named 'instruction'"))
+            raise (Exception("Datafile must contain a column named 'prompt'"))
 
         if "completion" not in dataset_fields:
-            raise (Exception("Datafile must contain a column named 'response'"))
+            raise (Exception("Datafile must contain a column named 'completion'"))
 
         self.instruction_prefix = instruction_prefix
         self.response_prefix = response_prefix
@@ -65,3 +68,29 @@ class InstructionSet:
         """
 
         return f"{self.instruction_prefix} {example['prompt']} {self.response_prefix} {example['completion']}"
+
+    def upload(self, instruction_set_name):
+        ARCEE_API_KEY = os.getenv("ARCEE_API_KEY")
+        if ARCEE_API_KEY is None:
+            raise Exception("ARCEE_API_KEY must be in the environment")
+
+        for i in range(len(self)):
+            example = {
+                "prompt": self.dataset[i]["prompt"],
+                "completion": self.dataset[i]["completion"]
+            }
+            self._upload_single_example(example, ARCEE_API_KEY, instruction_set_name)
+
+    def _upload_single_example(self, example, ARCEE_API_KEY, instruction_set_name):
+        headers = {
+            "Authorization": f"Bearer {ARCEE_API_KEY}",
+            "Content-Type": "application/json"
+        }
+        data = {
+            "instruction_set_name": instruction_set_name,
+            "example": example
+        }
+        response = requests.post("http://127.0.0.1:9001/v1/upload-example", headers=headers, data=json.dumps(data))
+
+        if response.status_code != 200:
+            raise Exception(f"Failed to upload example. Response: {response.text}")
