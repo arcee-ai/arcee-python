@@ -2,6 +2,7 @@ __version__ = "0.0.6"
 import os
 import requests
 import json
+from arcee.retriever import Retriever
 
 
 # import arcee
@@ -55,3 +56,16 @@ def upload_doc(context, name, document_text, summary=None):
         raise Exception(f"Failed to upload example. Response: {response.text}")
 
     return response.json()
+
+def train_retriever(context):
+
+
+    return Retriever(context)
+
+def index_general_retriever(context):
+
+    return Retriever(context)
+
+def get_retriever(context):
+
+    return Retriever(context)
