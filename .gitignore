@@ -131,3 +131,6 @@ dmypy.json
 .pyre/
 
 EleutherAI
+*.ipynb
+*.csv
+*.jsonl

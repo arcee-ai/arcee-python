@@ -3,8 +3,8 @@ import os
 import requests
 import json
 from arcee.retriever import Retriever
-
-
+from arcee.retriever import check_retriever_status
+import time
 # import arcee
 # for doc in docs:
     # arcee.upload_doc(context="pubmed", name=doc["name"], document=doc["document"])
@@ -59,13 +59,41 @@ def upload_doc(context, name, document_text, summary=None):
 
 def train_retriever(context):
 
+    BASE_URL = "http://127.0.0.1:9001"  # replace with your actual API endpoint
+    API_VERSION = "v1"  # replace with your actual API version if different
 
-    return Retriever(context)
+    # Endpoint for train_retriever
+    endpoint = f"{BASE_URL}/{API_VERSION}/train-retriever"
+    # Data you wish to send
+    data_to_send = {
+        "context_name": context
+    }
 
-def index_general_retriever(context):
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {token}"
+    }
+
+    response = requests.post(endpoint, data=json.dumps(data_to_send), headers=headers)
+
+    if response.status_code != 201:
+        raise Exception(f"Failed to train retriever. Response: {response.text}")
+
+    print("Retriever training started - view retriever status at https://app.arcee.ai")
+
+    current_status = "machine_starting"
+
+    while current_status != "training_complete":
+        current_status = check_retriever_status(context)["status"]
+        print("Current status: ", current_status)
+
+        time.sleep(5)
+
+        if current_status == "training_complete":
+            print("Retriever training complete")
+            break
 
     return Retriever(context)
 
 def get_retriever(context):
-
     return Retriever(context)
