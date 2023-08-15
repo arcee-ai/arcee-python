@@ -43,7 +43,7 @@ class Retriever:
         if self.status != "training_complete":
             raise Exception("Retriever is not ready. Please wait for training to complete.")
         #self.retriever_url = retriever_api_response["retriever_url"]
-        self.retriever_url = "https://mbrbj7kufwdir2uy2lox2osvcy0hmvhn.lambda-url.us-east-2.on.aws/retrieve"
+        self.retriever_url = "https://3fjzbjz9ne.execute-api.us-east-2.amazonaws.com/prod/retrieve"
 
     def retrieve(self, query, size=3):
         """Retrieve a  from a given URL"""
