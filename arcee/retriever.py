@@ -52,7 +52,11 @@ class Retriever:
             "query": query
         }
 
-        response = requests.post(self.retriever_url, json=payload)
+        headers = {
+            "Authorization": f"Bearer {os.environ['ARCEE_API_KEY']}"
+        }
+
+        response = requests.post(self.retriever_url, json=payload, headers=headers)
 
         if response.status_code != 200:
             raise Exception(f"Failed to retrieve. Response: {response.text}")
