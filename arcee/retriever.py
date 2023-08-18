@@ -1,15 +1,11 @@
 import os
 import requests
 import json
+from arcee.config import ARCEE_API_URL, ARCEE_QUERY_URL, ARCEE_API_KEY
 
 def check_retriever_status(context):
-    # Base API URL and version
-    BASE_URL = "http://127.0.0.1:9001"  # replace with your actual API endpoint
-    API_VERSION = "v1"  # replace with your actual API version if different
 
-    # Endpoint for train_retriever
-    endpoint = f"{BASE_URL}/{API_VERSION}/get-retriever-status"
-
+    endpoint = f"{ARCEE_API_URL}/get-retriever-status"
     # Data you wish to send
     data_to_send = {
         "context_name": context
@@ -17,7 +13,7 @@ def check_retriever_status(context):
 
     headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {os.environ['ARCEE_API_KEY']}"
+        "Authorization": f"Bearer {ARCEE_API_KEY}"
     }
 
     response = requests.post(endpoint, data=json.dumps(data_to_send), headers=headers)
@@ -30,9 +26,6 @@ def check_retriever_status(context):
 class Retriever:
     def __init__(self, context):
 
-        if "ARCEE_API_KEY" not in os.environ:
-            raise Exception("ARCEE_API_KEY must be in the environment to initialize a Retriever")
-
         self.context = context
 
         retriever_api_response = check_retriever_status(context)
@@ -42,8 +35,10 @@ class Retriever:
 
         if self.status != "training_complete":
             raise Exception("Retriever is not ready. Please wait for training to complete.")
+
+        #if ever separate retriever services froma arcee
         #self.retriever_url = retriever_api_response["retriever_url"]
-        self.retriever_url = "https://3fjzbjz9ne.execute-api.us-east-2.amazonaws.com/prod/retrieve"
+        self.retriever_url = ARCEE_QUERY_URL
 
     def retrieve(self, query, size=3):
         """Retrieve a  from a given URL"""

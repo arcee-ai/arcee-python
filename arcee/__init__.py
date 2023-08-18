@@ -4,6 +4,7 @@ import requests
 import json
 from arcee.retriever import Retriever
 from arcee.retriever import check_retriever_status
+from arcee.config import ARCEE_API_KEY, ARCEE_API_URL, ARCEE_APP_URL
 import time
 # import arcee
 # for doc in docs:
@@ -21,6 +22,9 @@ import time
 # retriever.retrieve_and_generate("what are the components of Scopolamine?", generator="GPT-4")
 ##>> ADD GENERATOR FOR DEMO
 
+if ARCEE_API_KEY is None:
+    raise Exception(f"ARCEE_API_KEY must be in the environment. You can retrieve your API key from {ARCEE_APP_URL}")
+
 def upload_doc(context, name, document_text, summary=None):
     """
     Upload a document to a context
@@ -31,10 +35,6 @@ def upload_doc(context, name, document_text, summary=None):
         document_text (str): The text of the document
         summary (str, optional): The summary of the document. Defaults to None. Summary will be the first 500 characters of the document if not provided.
     """
-    ARCEE_API_KEY = os.getenv("ARCEE_API_KEY")
-    if ARCEE_API_KEY is None:
-        raise Exception("ARCEE_API_KEY must be in the environment")
-
     doc = {
         "name": name,
         "summary": summary if summary is not None else document_text[:500],
@@ -52,7 +52,7 @@ def upload_doc(context, name, document_text, summary=None):
     }
 
     #response = requests.post("http://localhost:8000/v1/upload-context", headers=headers, data=json.dumps(data))
-    response = requests.post("http://platform-alb-1282355902.us-east-2.elb.amazonaws.com/v1/upload-context", headers=headers, data=json.dumps(data))
+    response = requests.post(ARCEE_API_URL, headers=headers, data=json.dumps(data))
 
     if response.status_code != 200:
         raise Exception(f"Failed to upload example. Response: {response.text}")
@@ -61,12 +61,7 @@ def upload_doc(context, name, document_text, summary=None):
 
 def train_retriever(context):
 
-    BASE_URL = "http://127.0.0.1:9001"  # replace with your actual API endpoint
-    API_VERSION = "v1"  # replace with your actual API version if different
-
-    # Endpoint for train_retriever
-    endpoint = f"{BASE_URL}/{API_VERSION}/train-retriever"
-    # Data you wish to send
+    endpoint = f"{ARCEE_API_URL}/train-retriever"
     data_to_send = {
         "context_name": context
     }
@@ -81,7 +76,7 @@ def train_retriever(context):
     if response.status_code != 201:
         raise Exception(f"Failed to train retriever. Response: {response.text}")
 
-    print("Retriever training started - view retriever status at https://app.arcee.ai")
+    print(f"Retriever training started - view retriever status at {ARCEE_APP_URL}")
 
     current_status = "machine_starting"
 

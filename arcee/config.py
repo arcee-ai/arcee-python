@@ -1,0 +1,45 @@
+import json
+import os
+
+def get_conditional_configuration_variable(key, default):
+    """Retrieves the configuration variable conditionally.
+        ##1. check if variable is in environment
+        ##2. check if variable is in config file
+        ##3. return default value
+    Args:
+        key (string): The name of the configuration variable.
+        default (string): The default value of the configuration variable.
+    Returns:
+        string: The value of the conditional configuration variable.
+    """
+
+    os_name = os.name
+
+    if os_name == "nt":
+        default_path = os.getenv("USERPROFILE") + "\\arcee\\config.json"
+    else:
+        default_path = os.getenv("HOME") + "/.config/arcee/config.json"
+
+    # default configuration location
+    conf_location = os.getenv(
+        "ARCEE_CONFIG_LOCATION",
+        default=default_path,
+    )
+
+    if os.path.exists(conf_location):
+        with open(conf_location) as f:
+            config = json.load(f)
+    else:
+        config = {}
+
+    if os.getenv(key) != None:
+        return os.getenv(key)
+    elif key in config.keys():
+        return config[key]
+    else:
+        return default
+
+ARCEE_API_URL = get_conditional_configuration_variable("ARCEE_API_URL", "https://api.arcee.com")
+ARCEE_APP_URL = get_conditional_configuration_variable("ARCEE_APP_URL", "https://app.arcee.com")
+ARCEE_API_KEY = get_conditional_configuration_variable("ARCEE_API_KEY", None)
+ARCEE_QUERY_URL = get_conditional_configuration_variable("ARCEE_QUERY_URL", "https://3fjzbjz9ne.execute-api.us-east-2.amazonaws.com/prod/retrieve")
