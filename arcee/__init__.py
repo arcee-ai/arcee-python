@@ -42,17 +42,17 @@ def upload_doc(context, name, document_text, summary=None):
     }
 
     headers = {
-        #"Authorization": f"Bearer {ARCEE_API_KEY}",
         "X-Token": f"{ARCEE_API_KEY}",
         "Content-Type": "application/json"
     }
+
     data = {
         "context_name": context,
         "document": doc
     }
 
     #response = requests.post("http://localhost:8000/v1/upload-context", headers=headers, data=json.dumps(data))
-    response = requests.post(ARCEE_API_URL, headers=headers, data=json.dumps(data))
+    response = requests.post(f"{ARCEE_API_URL}/v1/upload-context", headers=headers, data=json.dumps(data))
 
     if response.status_code != 200:
         raise Exception(f"Failed to upload example. Response: {response.text}")
@@ -61,14 +61,14 @@ def upload_doc(context, name, document_text, summary=None):
 
 def train_retriever(context):
 
-    endpoint = f"{ARCEE_API_URL}/train-retriever"
+    endpoint = f"{ARCEE_API_URL}/v1/train-retriever"
     data_to_send = {
         "context_name": context
     }
 
     headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {token}"
+        "X-Token": f"{ARCEE_API_KEY}",
+        "Content-Type": "application/json"
     }
 
     response = requests.post(endpoint, data=json.dumps(data_to_send), headers=headers)

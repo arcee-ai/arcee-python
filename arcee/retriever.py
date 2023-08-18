@@ -12,8 +12,8 @@ def check_retriever_status(context):
     }
 
     headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {ARCEE_API_KEY}"
+        "X-Token": f"{ARCEE_API_KEY}",
+        "Content-Type": "application/json"
     }
 
     response = requests.post(endpoint, data=json.dumps(data_to_send), headers=headers)
@@ -48,7 +48,7 @@ class Retriever:
         }
 
         headers = {
-            "Authorization": f"Bearer {os.environ['ARCEE_API_KEY']}"
+            "Authorization": f"Bearer {ARCEE_API_KEY}"
         }
 
         response = requests.post(self.retriever_url, json=payload, headers=headers)

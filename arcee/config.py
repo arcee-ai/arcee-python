@@ -39,7 +39,7 @@ def get_conditional_configuration_variable(key, default):
     else:
         return default
 
-ARCEE_API_URL = get_conditional_configuration_variable("ARCEE_API_URL", "https://api.arcee.com")
-ARCEE_APP_URL = get_conditional_configuration_variable("ARCEE_APP_URL", "https://app.arcee.com")
+ARCEE_API_URL = get_conditional_configuration_variable("ARCEE_API_URL", "https://api.arcee.ai")
+ARCEE_APP_URL = get_conditional_configuration_variable("ARCEE_APP_URL", "https://app.arcee.ai")
 ARCEE_API_KEY = get_conditional_configuration_variable("ARCEE_API_KEY", None)
 ARCEE_QUERY_URL = get_conditional_configuration_variable("ARCEE_QUERY_URL", "https://3fjzbjz9ne.execute-api.us-east-2.amazonaws.com/prod/retrieve")
