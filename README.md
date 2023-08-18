@@ -1,101 +1,48 @@
 # Arcee
 
-:tulip:	The open source alignment toolkit for finetuning and deploying LLMs :tulip:
+:tulip:	The Arcee client for executing domain-adpated language model routines :tulip:
 
-## Finetuning Datasets
+## Authenticating
 
-The Arcee toolkit contains routines for you to manage and generate finetuning datasets. The arcee toolkit supports supervised finetuning (SFT) aka intruction tuning. 
-
-### ✍️ Instruction Set ✍️
-
-Instruction tuning datasets contain a series of prompt and completion examples.
-
-Instruction sets can be loaded from a csv.
+In bash:
 
 ```
-from arcee.data import InstructionSet
-instruction_set = InstructionSet("./datasets/strip_api.csv")
+export ARCEE_API_KEY=********
 ```
 
-Or downloaded from the Arcee platform
+In notebook:
 
 ```
-from arcee.data import InstructionSet
-instruction_set = InstructionSet("https://app.arcee.ai/arcee/alpaca")
+import os
+os.environ["ARCEE_API_KEY"] = "********"
 ```
 
-### Self-Instruct Generation
+## Upload Context
 
-### Evolv-Instruct Genertation
-
-### Explain-Instruct Generation
-
-
-## Finetuning Models
-
-### HuggingFace
+Upload context for your domain adapted langauge model to draw from.
 
 ```
-from arcee.models import LM
-from arcee.data import Instuctions
-
-lm = LM("falcon30b")
-instructions = Instructions("./datasets/stripe-api.json")
-lm.train(instructions)
-
-lm.predict("Place an order for the LLM-9000 product for 100 USD to the card 3007200039992000")
+import arcee
+arcee.upload_context("my_context", name="[name]", document_text="[text]")
 ```
 
-### OpenAI
+## Train Retriever
 
-### Cohere
-
-### Together
-
-### Mosaic ML
-
-## LangChain Integration
+Train a retriever to retrieve relevant documents for a given query.
 
 ```
-from langchain import Arcee
-#goes in llms/arcee.py
-
-prompt_template = "Write a stripe API request for the following: {order}."
-
-llm = Arcee(temperature=0)
-llm_chain = LLMChain(
-    llm=llm,
-    prompt=PromptTemplate.from_template(prompt_template)
-)
-llm_chain("Place an order for the LLM-9000 product for 100 USD to the card 3007200039992000")
+import arcee
+arcee.train_retriever("my_retriever", context_name="my_context")
 ```
 
-## Domain Pretraining
+Retriever training will stand up a new index for your context. Future context uploads will flow into this index.
 
-Coming soon!
+## Retrieve Documents
 
-## 🗻 Arcee Platform 🗻
-
-Arcee offers a platform for managing your proprietary language models in production. We offer a version of our platform hosted in our cloud as well as a deployable version that you can take on prem.
-
-### Authenticaiton
-
-To use the arcee platform, visit https://app.arcee.com/api-settings and `export ARCEE_API_KEY=*******` in your environment.
-
-### Dataset Managemnt
-
-View, search, and edit datasets. 
+Retrieve documents for a given query.
 
 ```
-instruction_set.upload("project-name")
+import arcee
+retriever = arcee.get_retriever("my_retriever")
+retriever.query("my query")
 ```
-
-### Hosted Training
-
-### Hosted Inference
-
-### Lifecycle Management
-
-
-
-
