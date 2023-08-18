@@ -134,3 +134,5 @@ EleutherAI
 *.ipynb
 *.csv
 *.jsonl
+
+env

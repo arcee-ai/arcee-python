@@ -42,7 +42,8 @@ def upload_doc(context, name, document_text, summary=None):
     }
 
     headers = {
-        "Authorization": f"Bearer {ARCEE_API_KEY}",
+        #"Authorization": f"Bearer {ARCEE_API_KEY}",
+        "X-Token": f"{ARCEE_API_KEY}",
         "Content-Type": "application/json"
     }
     data = {
@@ -50,7 +51,8 @@ def upload_doc(context, name, document_text, summary=None):
         "document": doc
     }
 
-    response = requests.post("http://127.0.0.1:9001/v1/upload-context", headers=headers, data=json.dumps(data))
+    #response = requests.post("http://localhost:8000/v1/upload-context", headers=headers, data=json.dumps(data))
+    response = requests.post("http://platform-alb-1282355902.us-east-2.elb.amazonaws.com/v1/upload-context", headers=headers, data=json.dumps(data))
 
     if response.status_code != 200:
         raise Exception(f"Failed to upload example. Response: {response.text}")

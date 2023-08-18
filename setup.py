@@ -13,13 +13,12 @@ with open("README.md", "r") as fh:
 with open("requirements.txt", "r") as fh:
     install_requires = fh.read().split('\n')
 
-
 setuptools.setup(
-    name="arcee-align",  
+    name="arcee-py",  
     version=version,
     author="Arcee",
     author_email="jacob@arcee.ai",
-    description="The open source toolkit for finetuning and deploying LLMs",
+    description="Python client for Arcee platform",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://arcee.ai/",
