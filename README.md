@@ -2,6 +2,12 @@
 
 :tulip:	The Arcee client for executing domain-adpated language model routines :tulip:
 
+## Installation
+
+```
+pip install arcee-py
+```
+
 ## Authenticating
 
 In bash:
