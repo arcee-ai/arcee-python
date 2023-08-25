@@ -1,6 +1,6 @@
 # Arcee
 
-:tulip:	The Arcee client for executing domain-adpated language model routines :tulip:
+The Arcee client for executing domain-adpated language model routines
 
 ## Installation
 
@@ -41,7 +41,7 @@ import arcee
 arcee.train_retriever("my_retriever", context_name="my_context")
 ```
 
-Retriever training will stand up a new index for your context. Future context uploads will flow into this index.
+Retriever training stands up a new index for your context. Future context uploads will flow into this index.
 
 ## Retrieve Documents
 
@@ -50,5 +50,5 @@ Retrieve documents for a given query.
 ```
 import arcee
 retriever = arcee.get_retriever("my_retriever")
-retriever.query("my query")
+retriever.retrieve("my query")
 ```
