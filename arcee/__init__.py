@@ -4,7 +4,7 @@ import requests
 import json
 from arcee.retriever import Retriever
 from arcee.retriever import check_retriever_status
-from arcee.config import ARCEE_API_KEY, ARCEE_API_URL, ARCEE_APP_URL
+from arcee.config import ARCEE_API_KEY, ARCEE_API_URL, ARCEE_APP_URL, ARCEE_API_VERSION
 import time
 # import arcee
 # for doc in docs:
@@ -52,7 +52,7 @@ def upload_doc(context, name, document_text, summary=None):
     }
 
     #response = requests.post("http://localhost:8000/v1/upload-context", headers=headers, data=json.dumps(data))
-    response = requests.post(f"{ARCEE_API_URL}/v1/upload-context", headers=headers, data=json.dumps(data))
+    response = requests.post(f"{ARCEE_API_URL}/{ARCEE_API_VERSION}/upload-context", headers=headers, data=json.dumps(data))
 
     if response.status_code != 200:
         raise Exception(f"Failed to upload example. Response: {response.text}")
@@ -61,7 +61,7 @@ def upload_doc(context, name, document_text, summary=None):
 
 def train_retriever(context):
 
-    endpoint = f"{ARCEE_API_URL}/v1/train-retriever"
+    endpoint = f"{ARCEE_API_URL}/{ARCEE_API_VERSION}/train-retriever"
     data_to_send = {
         "context_name": context
     }

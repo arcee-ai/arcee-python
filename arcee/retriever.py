@@ -1,11 +1,11 @@
 import os
 import requests
 import json
-from arcee.config import ARCEE_API_URL, ARCEE_QUERY_URL, ARCEE_API_KEY
+from arcee.config import ARCEE_API_URL, ARCEE_QUERY_URL, ARCEE_API_KEY, ARCEE_API_VERSION
 
 def check_retriever_status(context):
 
-    endpoint = f"{ARCEE_API_URL}/get-retriever-status"
+    endpoint = f"{ARCEE_API_URL}/{ARCEE_API_VERSION}/get-retriever-status"
     # Data you wish to send
     data_to_send = {
         "context_name": context
