@@ -1,6 +1,9 @@
-# Arcee
+# DALM by Arcee
 
 The Arcee client for executing domain-adpated language model routines
+
+![Arcee DALMs](https://uploads-ssl.webflow.com/64c95915793c8a64a186e43e/64de2c7fb2c99494dec2e0a4_realistic-lifelike-dalmatian-dog-puppy-pastel-bright-vintage-outfits-commercial%201-min.jpg)
+
 
 ## Installation
 
@@ -29,26 +32,34 @@ Upload context for your domain adapted langauge model to draw from.
 
 ```
 import arcee
-arcee.upload_context("my_context", name="[name]", document_text="[text]")
+arcee.upload_context("pubmed", name="[name]", document_text="[text]")
 ```
 
-## Train Retriever
+## Train DALM
 
-Train a retriever to retrieve relevant documents for a given query.
+Train a DALM with the context you have uploaded.
 
 ```
 import arcee
-arcee.train_retriever("my_retriever", context_name="my_context")
+dalm = arcee.train_dalm("medical_dalm", context="pubmed")
 ```
 
-Retriever training stands up a new index for your context. Future context uploads will flow into this index.
+The DALM training procedure trains your model in context and stands up an index for your model to draw from.
+
+## DALM Generation
+
+```
+import arcee
+med_dalm = arcee.get_dalm("medical_dalm")
+med_dalm.generate("What are the components of Scoplamine?")
+```
 
 ## Retrieve Documents
 
-Retrieve documents for a given query.
+Retrieve documents for a given query and to view them or plug into a different LLM.
 
 ```
 import arcee
-retriever = arcee.get_retriever("my_retriever")
-retriever.retrieve("my query")
+med_dalm = arcee.get_dalm("medical_dalm")
+med_dalm.retrieve("my query")
 ```

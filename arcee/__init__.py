@@ -1,4 +1,4 @@
-__version__ = "0.0.6"
+__version__ = "0.0.7"
 import os
 import requests
 import json
@@ -59,7 +59,7 @@ def upload_doc(context, name, document_text, summary=None):
 
     return response.json()
 
-def train_dalm(context):
+def train_dalm(name, context):
 
     endpoint = f"{ARCEE_API_URL}/{ARCEE_API_VERSION}/train-retriever"
     data_to_send = {
