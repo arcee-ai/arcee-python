@@ -2,8 +2,8 @@ __version__ = "0.0.6"
 import os
 import requests
 import json
-from arcee.retriever import Retriever
-from arcee.retriever import check_retriever_status
+from arcee.dalm import DALM
+from arcee.dalm import check_retriever_status
 from arcee.config import ARCEE_API_KEY, ARCEE_API_URL, ARCEE_APP_URL, ARCEE_API_VERSION
 import time
 # import arcee
@@ -59,7 +59,7 @@ def upload_doc(context, name, document_text, summary=None):
 
     return response.json()
 
-def train_retriever(context):
+def train_dalm(context):
 
     endpoint = f"{ARCEE_API_URL}/{ARCEE_API_VERSION}/train-retriever"
     data_to_send = {
@@ -90,7 +90,7 @@ def train_retriever(context):
             print("Retriever training complete")
             break
 
-    return Retriever(context)
+    return DALM(context)
 
-def get_retriever(context):
-    return Retriever(context)
+def get_dalm(context):
+    return DALM(context)
