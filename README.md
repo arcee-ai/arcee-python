@@ -54,7 +54,7 @@ med_dalm = arcee.get_dalm("medical_dalm")
 med_dalm.generate("What are the components of Scoplamine?")
 ```
 
-## Retrieve Documents
+## DALM Retrieval
 
 Retrieve documents for a given query and to view them or plug into a different LLM.
 

@@ -25,7 +25,7 @@ import time
 if ARCEE_API_KEY is None:
     raise Exception(f"ARCEE_API_KEY must be in the environment. You can retrieve your API key from {ARCEE_APP_URL}")
 
-def upload_doc(context, name, document_text, summary=None):
+def upload_doc(context, doc_name, doc_text):
     """
     Upload a document to a context
 
@@ -36,9 +36,8 @@ def upload_doc(context, name, document_text, summary=None):
         summary (str, optional): The summary of the document. Defaults to None. Summary will be the first 500 characters of the document if not provided.
     """
     doc = {
-        "name": name,
-        "summary": summary if summary is not None else document_text[:500],
-        "document": document_text
+        "name": doc_name,
+        "document": doc_text
     }
 
     headers = {
@@ -48,7 +47,7 @@ def upload_doc(context, name, document_text, summary=None):
 
     data = {
         "context_name": context,
-        "document": doc
+        "documents": [doc]
     }
 
     #response = requests.post("http://localhost:8000/v1/upload-context", headers=headers, data=json.dumps(data))
