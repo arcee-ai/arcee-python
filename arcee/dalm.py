@@ -3,12 +3,12 @@ import requests
 import json
 from arcee.config import ARCEE_API_URL, ARCEE_RETRIEVAL_URL, ARCEE_GENERATION_URL, ARCEE_API_KEY, ARCEE_API_VERSION
 
-def check_retriever_status(context):
+def check_model_status(name):
 
-    endpoint = f"{ARCEE_API_URL}/{ARCEE_API_VERSION}/get-retriever-status"
+    endpoint = f"{ARCEE_API_URL}/{ARCEE_API_VERSION}/get-model-status"
     # Data you wish to send
     data_to_send = {
-        "context_name": context
+        "name": name
     }
 
     headers = {
@@ -24,17 +24,17 @@ def check_retriever_status(context):
         return response.json()
 
 class DALM:
-    def __init__(self, context):
+    def __init__(self, name):
 
-        self.context = context
+        self.name = name
 
-        retriever_api_response = check_retriever_status(context)
+        retriever_api_response = check_model_status(name)
 
-        self.context_id = retriever_api_response["context_id"]
+        self.model_id = retriever_api_response["model_id"]
         self.status = retriever_api_response["status"]
 
         if self.status != "training_complete":
-            raise Exception("Retriever is not ready. Please wait for training to complete.")
+            raise Exception("DALM model is not ready. Please wait for training to complete.")
 
         #if ever separate retriever services froma arcee
         #self.retriever_url = retriever_api_response["retriever_url"]
@@ -44,7 +44,7 @@ class DALM:
     def retrieve(self, query, size=3):
         """Retrieve a  from a given URL"""
         payload = {
-            "context_id": self.context_id,
+            "model_id": self.model_id,
             "query": query,
             "size": size
         }
@@ -62,7 +62,7 @@ class DALM:
         
     def generate(self, query, size=3):
         payload = {
-            "context_id": self.context_id,
+            "model_id": self.model_id,
             "query": query,
             "size": size
         }

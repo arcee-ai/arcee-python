@@ -1,26 +1,11 @@
-__version__ = "0.0.7"
+__version__ = "0.0.8"
 import os
 import requests
 import json
 from arcee.dalm import DALM
-from arcee.dalm import check_retriever_status
+from arcee.dalm import check_model_status
 from arcee.config import ARCEE_API_KEY, ARCEE_API_URL, ARCEE_APP_URL, ARCEE_API_VERSION
 import time
-# import arcee
-# for doc in docs:
-    # arcee.upload_doc(context="pubmed", name=doc["name"], document=doc["document"])
-
-# retriever = arcee.train_retriever(context="pubmed", target_generator="GPT-4")
-# Get out of GPT-4 as soon as possible, Bedrock claude, cohere, etc. - llama+arcee domain on sagemaker
-
-# retriever.retrieve("what are the components of Scopolamine?")
-##>>Context 1: Scopolamine study1
-##>>Context 2: Scopolamine study2
-##>>Context 3: Scopolamine study3
-##>>Retrieval Time: 25ms
-
-# retriever.retrieve_and_generate("what are the components of Scopolamine?", generator="GPT-4")
-##>> ADD GENERATOR FOR DEMO
 
 if ARCEE_API_KEY is None:
     raise Exception(f"ARCEE_API_KEY must be in the environment. You can retrieve your API key from {ARCEE_APP_URL}")
@@ -31,9 +16,8 @@ def upload_doc(context, doc_name, doc_text):
 
     Args:
         context (str): The name of the context to upload to
-        name (str): The name of the document
-        document_text (str): The text of the document
-        summary (str, optional): The summary of the document. Defaults to None. Summary will be the first 500 characters of the document if not provided.
+        doc_name (str): The name of the document
+        doc_text (str): The text of the document
     """
     doc = {
         "name": doc_name,
@@ -50,7 +34,6 @@ def upload_doc(context, doc_name, doc_text):
         "documents": [doc]
     }
 
-    #response = requests.post("http://localhost:8000/v1/upload-context", headers=headers, data=json.dumps(data))
     response = requests.post(f"{ARCEE_API_URL}/{ARCEE_API_VERSION}/upload-context", headers=headers, data=json.dumps(data))
 
     if response.status_code != 200:
@@ -58,11 +41,14 @@ def upload_doc(context, doc_name, doc_text):
 
     return response.json()
 
-def train_dalm(name, context):
+def train_dalm(name, context=None, instructions=None, generator="Command"):
 
-    endpoint = f"{ARCEE_API_URL}/{ARCEE_API_VERSION}/train-retriever"
+    endpoint = f"{ARCEE_API_URL}/{ARCEE_API_VERSION}/train-model"
     data_to_send = {
-        "context_name": context
+        "name": name,
+        "context": context,
+        "instructions": instructions,
+        "generator": generator
     }
 
     headers = {
@@ -73,23 +59,9 @@ def train_dalm(name, context):
     response = requests.post(endpoint, data=json.dumps(data_to_send), headers=headers)
 
     if response.status_code != 201:
-        raise Exception(f"Failed to train retriever. Response: {response.text}")
+        raise Exception(f"Failed to train model. Response: {response.text}")
+    else:
+        print("DALM model training started - view model status at {ARCEE_APP_URL}, then arcee.get_model(" + name + ")")
 
-    print(f"Retriever training started - view retriever status at {ARCEE_APP_URL}")
-
-    current_status = "machine_starting"
-
-    while current_status != "training_complete":
-        current_status = check_retriever_status(context)["status"]
-        print("Current status: ", current_status)
-
-        time.sleep(5)
-
-        if current_status == "training_complete":
-            print("Retriever training complete")
-            break
-
-    return DALM(context)
-
-def get_dalm(context):
-    return DALM(context)
+def get_dalm(name):
+    return DALM(name)
