@@ -5,18 +5,14 @@ from arcee.config import ARCEE_API_URL, ARCEE_RETRIEVAL_URL, ARCEE_GENERATION_UR
 
 def check_model_status(name):
 
-    endpoint = f"{ARCEE_API_URL}/{ARCEE_API_VERSION}/get-model-status"
-    # Data you wish to send
-    data_to_send = {
-        "name": name
-    }
+    endpoint = f"{ARCEE_API_URL}/{ARCEE_API_VERSION}/train-model/status/{name}"
 
     headers = {
         "X-Token": f"{ARCEE_API_KEY}",
         "Content-Type": "application/json"
     }
 
-    response = requests.post(endpoint, data=json.dumps(data_to_send), headers=headers)
+    response = requests.get(endpoint, headers=headers)
 
     if response.status_code != 200:
         raise Exception(f"Failed to check retriever status. Response: {response.text}")
@@ -30,7 +26,7 @@ class DALM:
 
         retriever_api_response = check_model_status(name)
 
-        self.model_id = retriever_api_response["model_id"]
+        self.model_id = retriever_api_response["id"]
         self.status = retriever_api_response["status"]
 
         if self.status != "training_complete":
