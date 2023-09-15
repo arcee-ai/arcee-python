@@ -13,6 +13,8 @@ pip install arcee-py
 
 ## Authenticating
 
+Your Arcee API key is obtained at app.arcee.ai
+
 In bash:
 
 ```
