@@ -1,7 +1,8 @@
 import json
 import os
 
-def get_conditional_configuration_variable(key, default):
+
+def get_conditional_configuration_variable(key: str, default: str) -> str:
     """Retrieves the configuration variable conditionally.
         ##1. check if variable is in environment
         ##2. check if variable is in config file
@@ -16,9 +17,9 @@ def get_conditional_configuration_variable(key, default):
     os_name = os.name
 
     if os_name == "nt":
-        default_path = os.getenv("USERPROFILE") + "\\arcee\\config.json"
+        default_path = os.getenv("USERPROFILE", "") + "\\arcee\\config.json"
     else:
-        default_path = os.getenv("HOME") + "/.config/arcee/config.json"
+        default_path = os.getenv("HOME", "") + "/.config/arcee/config.json"
 
     # default configuration location
     conf_location = os.getenv(
@@ -32,16 +33,21 @@ def get_conditional_configuration_variable(key, default):
     else:
         config = {}
 
-    if os.getenv(key) != None:
-        return os.getenv(key)
+    if os.getenv(key) is not None:
+        return os.environ[key]
     elif key in config.keys():
         return config[key]
     else:
         return default
 
+
 ARCEE_API_URL = get_conditional_configuration_variable("ARCEE_API_URL", "https://api.arcee.ai")
 ARCEE_APP_URL = get_conditional_configuration_variable("ARCEE_APP_URL", "https://app.arcee.ai")
-ARCEE_API_KEY = get_conditional_configuration_variable("ARCEE_API_KEY", None)
-ARCEE_RETRIEVAL_URL = get_conditional_configuration_variable("ARCEE_QUERY_URL", "https://3fjzbjz9ne.execute-api.us-east-2.amazonaws.com/prod/retrieve")
-ARCEE_GENERATION_URL = get_conditional_configuration_variable("ARCEE_GENERATION_URL", "https://3fjzbjz9ne.execute-api.us-east-2.amazonaws.com/prod/generate")
+ARCEE_API_KEY = get_conditional_configuration_variable("ARCEE_API_KEY", "")
+ARCEE_RETRIEVAL_URL = get_conditional_configuration_variable(
+    "ARCEE_QUERY_URL", "https://3fjzbjz9ne.execute-api.us-east-2.amazonaws.com/prod/retrieve"
+)
+ARCEE_GENERATION_URL = get_conditional_configuration_variable(
+    "ARCEE_GENERATION_URL", "https://3fjzbjz9ne.execute-api.us-east-2.amazonaws.com/prod/generate"
+)
 ARCEE_API_VERSION = get_conditional_configuration_variable("ARCEE_API_VERSION", "v1")
