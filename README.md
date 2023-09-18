@@ -65,3 +65,38 @@ import arcee
 med_dalm = arcee.get_dalm("medical_dalm")
 med_dalm.retrieve("my query")
 ```
+
+# Contributing
+
+We use `invoke` to manage this repo. You don't need to use it, but it simplifies the workflow.
+## Set up the repo
+```shell
+git clone https://github.com/arcee-ai/arcee-python && cd arcee-python
+# optionally setup your virtual environment (recommended)
+python -m venv .venv && source .venv/bin/activate
+# install repo
+pip install invoke
+inv install
+```
+
+## Format, lint, test
+```shell
+inv format  # run black and ruff
+inv lint    # black check, ruff check, mypy
+inv test    # pytest
+```
+
+## Publishing
+We publish in this repo by creating a new release/tag in github. On release, a github action will 
+publish the `__version__` of arcee-py that is in `arcee/__init__.py`
+
+**So you need to increase that version before releasing, otherwise it will fail**
+
+### To create a new release
+1. Open a PR increasing the `__version__` of arcee-py. You can manually edit it or run `inv uv`
+2. Create a new release, with the name being the `__version__` of arcee-py
+
+### Manual release [not recommended]
+
+We do not recommend this. If you need to, please make the version number an alpha or beta release.<br>
+If you need to create a manual release, you can run `inv build && inv publish`

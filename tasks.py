@@ -149,7 +149,6 @@ def publish(ctx: Context) -> None:
         pty=True,
         echo=True,
     )
-    ctx.run("python setup.py sdist", pty=True, echo=True)
     ctx.run("twine upload dist/*", pty=True, echo=True)
 
 
