@@ -29,7 +29,6 @@ path = "arcee/__init__.py"
 
 [project.optional-dependencies]
 dev = [
-    "build",
     "black",
     "invoke",
     "mypy",
