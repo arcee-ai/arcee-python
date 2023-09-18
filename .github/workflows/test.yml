@@ -8,7 +8,7 @@ on:
       - "arcee/**"
 
 jobs:
-  check_backend_changes:
+  test_lint:
     runs-on: ubuntu-latest
 
     steps:
