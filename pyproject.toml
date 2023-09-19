@@ -8,7 +8,7 @@ name = "arcee-py"
 authors = [{name = "Jacob Solowetz", email = "jacob@arcee.ai"}, {name = "Ben Epstein", email = "ben@arcee.ai"}]
 readme = "README.md"
 requires-python = ">=3.10"
-license = {text = "Apache 2.0"}
+license = {text = "MIT"}
 dynamic = ["version", "description"]
 packages = [
      { include = "arcee" }
@@ -17,8 +17,8 @@ dependencies = [
     "requests"
 ]
 
-#[project.scripts]
-#arcee = "arcee.cli:cli"
+[project.scripts]
+arcee = "arcee.cli:cli"
 
 [tool.hatch.build.targets.wheel.shared-data]
 "prefix" = "prefix"
@@ -39,7 +39,6 @@ dev = [
 
 [project.urls]
 Home = "https://arcee.ai"
-
 
 [tool.black]
 line-length = 120
