@@ -33,12 +33,7 @@ def get_conditional_configuration_variable(key: str, default: str) -> str:
     else:
         config = {}
 
-    if os.getenv(key) is not None:
-        return os.environ[key]
-    elif key in config.keys():
-        return config[key]
-    else:
-        return default
+    return (os.getenv(key) or config.get(key)) or default
 
 
 ARCEE_API_URL = get_conditional_configuration_variable("ARCEE_API_URL", "https://api.arcee.ai")
