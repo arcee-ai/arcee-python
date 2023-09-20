@@ -14,7 +14,9 @@ packages = [
      { include = "arcee" }
  ]
 dependencies = [
-    "requests"
+    "requests",
+    "typer",
+    "rich"
 ]
 
 [project.scripts]
