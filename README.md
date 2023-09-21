@@ -34,7 +34,7 @@ Upload context for your domain adapted langauge model to draw from.
 
 ```
 import arcee
-arcee.upload_context("pubmed", doc_name="doc1", doc_text="whoa")
+arcee.upload_doc("pubmed", doc_name="doc1", doc_text="whoa")
 ```
 
 ## Train DALM
