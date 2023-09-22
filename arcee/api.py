@@ -4,7 +4,7 @@ from typing import Optional
 import requests
 
 from arcee.config import ARCEE_API_KEY, ARCEE_API_URL, ARCEE_API_VERSION, ARCEE_APP_URL
-from arcee.dalm import DALM
+from arcee.dalm import DALM, check_model_status
 
 
 def upload_doc(context: str, doc_name: str, doc_text: str) -> dict[str, str]:
@@ -73,8 +73,16 @@ def train_dalm(
 
     if response.status_code != 201:
         raise Exception(f"Failed to train model. Response: {response.text}")
-    else:
-        print(f"DALM model training started - view model status at {ARCEE_APP_URL}, then arcee.get_model(" + name + ")")
+    status_url = f"{ARCEE_APP_URL}/arcee/models/{name}/training"
+    print(
+        f"DALM model training started - view model status at {status_url} or with `arcee.get_dalm_status({name}).\n"
+        f"Then, get your DALM with arcee.get_dalm({name})"
+    )
+
+
+def get_dalm_status(id_or_name: str) -> dict[str, str]:
+    """Gets the status of a DALM training job"""
+    return check_model_status(id_or_name)
 
 
 def get_dalm(name: str) -> DALM:
