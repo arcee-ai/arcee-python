@@ -79,7 +79,7 @@ def train_dalm(
     # TODO: Add org in url
     status_url = f"{ARCEE_APP_URL}/models/{name}/training"
     print(
-        f'DALM model training started - view model status at {status_url} and click on your model or with `arcee.get_dalm_status("{name}").\n'
+        f'DALM model training started - view model status at {status_url} and click on your model.\n'
         f'When training is finished, get DALM with arcee.get_dalm("{name}")'
     )
 
