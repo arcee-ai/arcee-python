@@ -73,7 +73,8 @@ def train_dalm(
 
     if response.status_code != 201:
         raise Exception(f"Failed to train model. Response: {response.text}")
-    status_url = f"{ARCEE_APP_URL}/arcee/models/{name}/training"
+    # TODO: Add org in url
+    status_url = f"{ARCEE_APP_URL}/models/{name}/training"
     print(
         f"DALM model training started - view model status at {status_url} or with `arcee.get_dalm_status({name}).\n"
         f"Then, get your DALM with arcee.get_dalm({name})"
