@@ -102,6 +102,9 @@ def context(
             dir_okay=True,
         ),
     ] = None,
+    chunk_size: Annotated[
+        int, typer.Option(help="Specify the chunk size in megabytes (MB) to limit memory usage during file uploads.")
+    ] = 512,
 ) -> None:
     """Upload document(s) to context. If a directory is provided, all valid files in the directory will be uploaded.
     At least one of file or directory must be provided.
@@ -110,6 +113,7 @@ def context(
         name (str): Name of the context
         file (Path): Path to the file.
         directory (Path): Path to the directory.
+        chunk_size (int): The chunk size in megabytes (MB) to limit memory usage during file uploads.
     """
     if not file and not directory:
         raise typer.BadParameter("Atleast one file or directory must be provided")
@@ -123,7 +127,7 @@ def context(
     file.extend(directory)
 
     try:
-        resp = UploadHandler.handle_doc_upload(name, file)
+        resp = UploadHandler.handle_doc_upload(name, file, chunk_size)
         typer.secho(resp)
     except Exception as e:
         raise ArceeException(message=f"Error uploading document(s): {e}") from e
