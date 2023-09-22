@@ -3,7 +3,7 @@ from typing import Optional
 
 import requests
 
-from arcee.config import ARCEE_API_KEY, ARCEE_API_URL, ARCEE_API_VERSION
+from arcee.config import ARCEE_API_KEY, ARCEE_API_URL, ARCEE_API_VERSION, ARCEE_APP_URL
 from arcee.dalm import DALM
 
 
@@ -74,7 +74,7 @@ def train_dalm(
     if response.status_code != 201:
         raise Exception(f"Failed to train model. Response: {response.text}")
     else:
-        print("DALM model training started - view model status at {ARCEE_APP_URL}, then arcee.get_model(" + name + ")")
+        print(f"DALM model training started - view model status at {ARCEE_APP_URL}, then arcee.get_model(" + name + ")")
 
 
 def get_dalm(name: str) -> DALM:

@@ -1,4 +1,4 @@
-__version__ = "0.0.11"
+__version__ = "0.0.12"
 
 
 from arcee.api import get_dalm, train_dalm, upload_doc, upload_docs
