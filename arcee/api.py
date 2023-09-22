@@ -74,7 +74,7 @@ def train_dalm(
     if response.status_code != 201:
         response = requests.post(endpoint, data=json.dumps(data_to_send), headers=headers)
         if response.status_code != 201:
-            #try one more time to fix model service not properly creating new model record
+            # try one more time to fix model service not properly creating new model record
             raise Exception(f"Failed to train model. Response: {response.text}")
     # TODO: Add org in url
     status_url = f"{ARCEE_APP_URL}/models/{name}/training"
