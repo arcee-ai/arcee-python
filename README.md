@@ -70,6 +70,44 @@ med_dalm = arcee.get_dalm("medical_dalm")
 med_dalm.retrieve("my query")
 ```
 
+## Using the Arcee CLI
+
+You can easily train and use your Domain-Adapted Language Model (DALM) with Arcee using the CLI. Follow these steps post installation to train and utilize your DALM:
+
+### Upload Context
+
+Upload a context file for your DALM like,
+```shell
+arcee upload context pubmed --file doc1
+```
+Upload all files in a directory like,
+```shell
+arcee upload context pubmed --directory docs
+```
+Upload any combination of files and directories with,
+```shell
+arcee upload context pubmed --directory some_docs --file doc1 --directory more_docs --file doc2
+```
+*Note: The upload command ensures only valid and unique files are uploaded.*
+
+### Train your DALM:
+Train your DALM with any uploaded context like,
+```shell
+arcee train medical_dalm --context pubmed
+# wait for training to complete...
+```
+### DALM Generation:
+Generate text completions from a model like,
+ ```shell
+arcee generate medical_dalm --query "Can AI-driven music therapy contribute to the rehabilitation of patients with disorders of consciousness?"
+```
+
+### DALM Retrieval:
+Retrieve documents for a given query and to view them or plug into a different LLM like,
+```shell
+arcee retrieve medical_dalm --query "Can AI-driven music therapy contribute to the rehabilitation of patients with disorders of consciousness?"
+```
+
 # Contributing
 
 We use `invoke` to manage this repo. You don't need to use it, but it simplifies the workflow.
