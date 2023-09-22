@@ -46,6 +46,8 @@ Train a DALM with the context you have uploaded.
 ```
 import arcee
 dalm = arcee.train_dalm("medical_dalm", context="pubmed")
+# Wait for training to complete
+arcee.get_dalm_status("medical_dalm")
 ```
 
 The DALM training procedure trains your model in context and stands up an index for your model to draw from.
