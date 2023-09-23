@@ -1,6 +1,6 @@
-from functools import partial, wraps
+from functools import wraps
 from time import sleep
-from typing import Any, Callable, Literal, Optional, TypeVar, Union, cast
+from typing import Any, Callable, Literal, Optional, TypeVar, Union
 
 import requests
 from typing_extensions import ParamSpec
@@ -12,31 +12,28 @@ T = TypeVar("T")
 P = ParamSpec("P")
 
 
-def retry_call(
-    func: Optional[Callable[P, T]] = None, max_attempts: int = 2, wait_sec: Union[float, int] = 5
-) -> Callable[P, T]:
+def retry_call(*, max_attempts: int = 2, wait_sec: Union[float, int] = 5) -> Callable[[Callable[P, T]], Callable[P, T]]:
     """Retry api call"""
-    # Allows for using the decorator like @retry_call
-    # without having to call it directly (if you don't want to change the default params)
-    if func is None:
-        return cast(Callable[P, T], partial(retry_call, max_attempts=max_attempts, wait_sec=wait_sec))
     assert wait_sec > 0, "wait_sec must be > 0"
 
-    @wraps(func)
-    def decorator(*args: P.args, **kwargs: P.kwargs) -> T:
-        exception = ""
-        for _ in range(max_attempts):
-            try:
-                return func(*args, **kwargs)
-            except Exception as e:
-                exception = str(e)
-                sleep(wait_sec)
-        raise Exception(exception)
+    def retry_wrapper(func: Callable[P, T]) -> Callable[P, T]:
+        @wraps(func)
+        def decorator(*args: P.args, **kwargs: P.kwargs) -> T:
+            exception = ""
+            for _ in range(max_attempts):
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    exception = str(e)
+                    sleep(wait_sec)
+            raise Exception(exception)
 
-    return decorator
+        return decorator
+
+    return retry_wrapper
 
 
-@retry_call
+@retry_call()
 def make_request(
     request: Literal["post", "get"],
     route: Union[str, Route],
