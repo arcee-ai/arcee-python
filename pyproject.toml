@@ -16,7 +16,7 @@ packages = [
 dependencies = [
     "requests",
     "typer",
-    "rich"
+    "rich",
 ]
 
 [project.scripts]
@@ -35,6 +35,8 @@ dev = [
     "invoke",
     "mypy",
     "pytest",
+    "pytest-cov",
+    "pytest-env",
     "ruff",
     "types-requests",
 ]
@@ -64,12 +66,14 @@ addopts = [
     "-o",
     "console_output_style=progress",
     "--disable-warnings",
-    "--cov=dalm",
-    "--cov=tests",
+    "--cov=arcee",
     "--cov-report=term-missing",
     "--cov-report=xml",
     "--cov-report=html",
     "--durations=10",
+]
+env = [
+    "ARCEE_API_KEY = FOOBAR",
 ]
 
 
@@ -79,3 +83,7 @@ ban-relative-imports = "all"
 
 [tool.mypy]
 disallow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = "retrying.*"
+ignore_missing_imports = true

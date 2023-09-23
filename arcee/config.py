@@ -45,4 +45,4 @@ ARCEE_RETRIEVAL_URL = get_conditional_configuration_variable(
 ARCEE_GENERATION_URL = get_conditional_configuration_variable(
     "ARCEE_GENERATION_URL", "https://3fjzbjz9ne.execute-api.us-east-2.amazonaws.com/prod/generate"
 )
-ARCEE_API_VERSION = get_conditional_configuration_variable("ARCEE_API_VERSION", "v1")
+ARCEE_API_VERSION = get_conditional_configuration_variable("ARCEE_API_VERSION", "v2")

@@ -1,19 +1,15 @@
+from typing import Any, Literal
+
 import requests
 
-from arcee.config import ARCEE_API_KEY, ARCEE_API_URL, ARCEE_API_VERSION, ARCEE_GENERATION_URL, ARCEE_RETRIEVAL_URL
+from arcee import config
+from arcee.api_handler import make_request, retry_call
+from arcee.schemas.routes import Route
 
 
 def check_model_status(name: str) -> dict[str, str]:
-    endpoint = f"{ARCEE_API_URL}/{ARCEE_API_VERSION}/train-model/status/{name}"
-
-    headers = {"X-Token": f"{ARCEE_API_KEY}", "Content-Type": "application/json"}
-
-    response = requests.get(endpoint, headers=headers)
-
-    if response.status_code != 200:
-        raise Exception(f"Failed to check retriever status. Response: {response.text}")
-    else:
-        return response.json()
+    route = Route.train_model_status.value.format(id_or_name=name)
+    return make_request("get", route)
 
 
 class DALM:
@@ -30,30 +26,24 @@ class DALM:
 
         # if ever separate retriever services froma arcee
         # self.retriever_url = retriever_api_response["retriever_url"]
-        self.generate_url = ARCEE_GENERATION_URL
-        self.retriever_url = ARCEE_RETRIEVAL_URL
+        self.generate_url = config.ARCEE_GENERATION_URL
+        self.retriever_url = config.ARCEE_RETRIEVAL_URL
+
+    @retry_call(wait_sec=0.5)
+    def invoke(self, invocation_type: Literal["retrieve", "generate"], query: str, size: int) -> dict[str, Any]:
+        url = self.retriever_url if invocation_type == "retrieve" else self.generate_url
+        payload = {"model_id": self.model_id, "query": query, "size": size}
+        headers = {"Authorization": f"Bearer {config.ARCEE_API_KEY}"}
+
+        response = requests.post(url, json=payload, headers=headers)
+        if response.status_code != 200:
+            raise Exception(f"Failed to {invocation_type}. Response: {response.text}")
+        return response.json()
 
     def retrieve(self, query: str, size: int = 3) -> dict:
-        """Retrieve a  from a given URL"""
-        payload = {"model_id": self.model_id, "query": query, "size": size}
-
-        headers = {"Authorization": f"Bearer {ARCEE_API_KEY}"}
-
-        response = requests.post(self.retriever_url, json=payload, headers=headers)
-
-        if response.status_code != 200:
-            raise Exception(f"Failed to retrieve. Response: {response.text}")
-
-        return response.json()
+        """Retrieve {size} contexts with your retriever for the given query"""
+        return self.invoke("retrieve", query, size)
 
     def generate(self, query: str, size: int = 3) -> dict:
-        payload = {"model_id": self.model_id, "query": query, "size": size}
-
-        headers = {"Authorization": f"Bearer {ARCEE_API_KEY}"}
-
-        response = requests.post(self.generate_url, json=payload, headers=headers)
-
-        if response.status_code != 200:
-            raise Exception(f"Failed to generate. Response: {response.text}")
-
-        return response.json()
+        """Generate a response using {size} contexts with your generator for the given query"""
+        return self.invoke("generate", query, size)

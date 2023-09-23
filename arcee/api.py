@@ -1,10 +1,9 @@
-import json
 from typing import Optional
 
-import requests
-
-from arcee.config import ARCEE_API_KEY, ARCEE_API_URL, ARCEE_API_VERSION, ARCEE_APP_URL
+from arcee import config
+from arcee.api_handler import make_request
 from arcee.dalm import DALM, check_model_status
+from arcee.schemas.routes import Route
 
 
 def upload_doc(context: str, doc_name: str, doc_text: str) -> dict[str, str]:
@@ -17,19 +16,8 @@ def upload_doc(context: str, doc_name: str, doc_text: str) -> dict[str, str]:
         doc_text (str): The text of the document
     """
     doc = {"name": doc_name, "document": doc_text}
-
-    headers = {"X-Token": f"{ARCEE_API_KEY}", "Content-Type": "application/json"}
-
     data = {"context_name": context, "documents": [doc]}
-
-    response = requests.post(
-        f"{ARCEE_API_URL}/{ARCEE_API_VERSION}/upload-context", headers=headers, data=json.dumps(data)
-    )
-
-    if response.status_code != 200:
-        raise Exception(f"Failed to upload example. Response: {response.text}")
-
-    return response.json()
+    return make_request("post", Route.contexts, data)
 
 
 def upload_docs(context: str, docs: list[dict[str, str]]) -> dict[str, str]:
@@ -47,46 +35,30 @@ def upload_docs(context: str, docs: list[dict[str, str]]) -> dict[str, str]:
 
         doc_list.append({"name": doc["doc_name"], "document": doc["doc_text"]})
 
-    headers = {"X-Token": f"{ARCEE_API_KEY}", "Content-Type": "application/json"}
-
     data = {"context_name": context, "documents": doc_list}
-
-    response = requests.post(
-        f"{ARCEE_API_URL}/{ARCEE_API_VERSION}/upload-context", headers=headers, data=json.dumps(data)
-    )
-
-    if response.status_code != 200:
-        raise Exception(f"Failed to upload example. Response: {response.text}")
-
-    return response.json()
+    return make_request("post", Route.contexts, data)
 
 
 def train_dalm(
     name: str, context: Optional[str] = None, instructions: Optional[str] = None, generator: str = "Command"
 ) -> None:
-    endpoint = f"{ARCEE_API_URL}/{ARCEE_API_VERSION}/train-model"
-    data_to_send = {"name": name, "context": context, "instructions": instructions, "generator": generator}
-
-    headers = {"X-Token": f"{ARCEE_API_KEY}", "Content-Type": "application/json"}
-
-    response = requests.post(endpoint, data=json.dumps(data_to_send), headers=headers)
-
-    if response.status_code != 201:
-        response = requests.post(endpoint, data=json.dumps(data_to_send), headers=headers)
-        if response.status_code != 201:
-            # try one more time to fix model service not properly creating new model record
-            raise Exception(f"Failed to train model. Response: {response.text}")
-    # TODO: Add org in url
-    status_url = f"{ARCEE_APP_URL}/models/{name}/training"
+    data = {"name": name, "context": context, "instructions": instructions, "generator": generator}
+    make_request("post", Route.train_model, data)
+    org = get_current_org()
+    status_url = f"{config.ARCEE_APP_URL}/{org}/models/{name}/training"
     print(
-        f"DALM model training started - view model status at {status_url} and click on your model.\n"
-        f'When training is finished, get DALM with arcee.get_dalm("{name}")'
+        f'DALM model training started - view model status at {status_url} or with arcee.get_dalm_status("{name}")\n'
+        f'When training is finished, get your DALM with arcee.get_dalm("{name}")'
     )
 
 
 def get_dalm_status(id_or_name: str) -> dict[str, str]:
     """Gets the status of a DALM training job"""
     return check_model_status(id_or_name)
+
+
+def get_current_org() -> str:
+    return make_request("get", Route.identity)["org"]
 
 
 def get_dalm(name: str) -> DALM:

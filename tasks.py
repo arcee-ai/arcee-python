@@ -7,7 +7,7 @@ from invoke.context import Context
 PACKAGE_NAME = "arcee"
 VERSION_FILE = f"{PACKAGE_NAME}/__init__.py"
 # TODO: do only dalm
-SOURCES = " ".join(["arcee", "tasks.py"])
+SOURCES = " ".join(["arcee", "tests", "tasks.py"])
 # TODO: Get this to 95
 PYTEST_FAIL_UNDER = 0
 
