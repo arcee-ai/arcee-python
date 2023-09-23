@@ -7,3 +7,4 @@ class Route(str, Enum):
     train_model_status = "models/status/{id_or_name}"
     train_retriever = "retrievers/train"
     train_retriever_status = "retrievers/status/{id_or_name}"
+    identity = "whoami"

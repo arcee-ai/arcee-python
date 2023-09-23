@@ -1,7 +1,7 @@
 from typing import Optional
 
+from arcee import config
 from arcee.api_handler import make_request
-from arcee.config import ARCEE_APP_URL
 from arcee.dalm import DALM, check_model_status
 from arcee.schemas.routes import Route
 
@@ -44,8 +44,8 @@ def train_dalm(
 ) -> None:
     data = {"name": name, "context": context, "instructions": instructions, "generator": generator}
     make_request("post", Route.train_model, data)
-    # TODO: Add org in url
-    status_url = f"{ARCEE_APP_URL}/models/{name}/training"
+    org = get_current_org()
+    status_url = f"{config.ARCEE_APP_URL}/{org}/models/{name}/training"
     print(
         f"DALM model training started - view model status at {status_url} and click on your model.\n"
         f'When training is finished, get DALM with arcee.get_dalm("{name}")'
@@ -55,6 +55,10 @@ def train_dalm(
 def get_dalm_status(id_or_name: str) -> dict[str, str]:
     """Gets the status of a DALM training job"""
     return check_model_status(id_or_name)
+
+
+def get_current_org() -> str:
+    return make_request("get", Route.identity)["org"]
 
 
 def get_dalm(name: str) -> DALM:

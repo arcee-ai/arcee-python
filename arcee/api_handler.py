@@ -5,8 +5,7 @@ from typing import Any, Callable, Literal, Optional, TypeVar, Union, cast
 import requests
 from typing_extensions import ParamSpec
 
-# from retrying import retry
-from arcee.config import ARCEE_API_KEY, ARCEE_API_URL, ARCEE_API_VERSION
+from arcee import config
 from arcee.schemas.routes import Route
 
 T = TypeVar("T")
@@ -47,9 +46,9 @@ def make_request(
 ) -> dict[str, str]:
     """Makes the request"""
     headers = headers or {}
-    internal_headers = {"X-Token": f"{ARCEE_API_KEY}", "Content-Type": "application/json"}
+    internal_headers = {"X-Token": f"{config.ARCEE_API_KEY}", "Content-Type": "application/json"}
     headers.update(**internal_headers)
-    url = f"{ARCEE_API_URL}/{ARCEE_API_VERSION}/{route}"
+    url = f"{config.ARCEE_API_URL}/{config.ARCEE_API_VERSION}/{route}"
 
     req_type = getattr(requests, request)
     response = req_type(url, json=body, params=params, headers=headers)

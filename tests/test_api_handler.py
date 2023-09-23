@@ -23,3 +23,14 @@ def test_retry_call_with_args() -> None:
 	assert (t1-t0) < 0.5
 	assert str(e.value) == "fail thrice!"
 
+
+def test_retry_call_from_class() -> None:
+	class Test:
+		@retry_call(wait_sec=0.05)
+		def tryit(self):
+			raise Exception("foo")
+	t = Test()
+	with pytest.raises(Exception) as e:
+		t.tryit()
+	assert str(e.value) == "foo"
+
