@@ -3,7 +3,7 @@ from typing import Any, Literal
 import requests
 
 from arcee import config
-from arcee.api_handler import make_request
+from arcee.api_handler import make_request, retry_call
 from arcee.schemas.routes import Route
 
 
@@ -29,6 +29,7 @@ class DALM:
         self.generate_url = config.ARCEE_GENERATION_URL
         self.retriever_url = config.ARCEE_RETRIEVAL_URL
 
+    @retry_call
     def invoke(self, invocation_type: Literal["retrieve", "generate"], query: str, size: int) -> dict[str, Any]:
         url = self.retriever_url if invocation_type == "retrieve" else self.generate_url
         payload = {"model_id": self.model_id, "query": query, "size": size}
@@ -40,8 +41,9 @@ class DALM:
         return response.json()
 
     def retrieve(self, query: str, size: int = 3) -> dict:
-        """Retrieve a  from a given URL"""
+        """Retrieve {size} contexts with your retriever for the given query"""
         return self.invoke("retrieve", query, size)
 
     def generate(self, query: str, size: int = 3) -> dict:
+        """Generate a response using {size} contexts with your generator for the given query"""
         return self.invoke("generate", query, size)
