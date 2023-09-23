@@ -1,19 +1,13 @@
 import requests
 
-from arcee.config import ARCEE_API_KEY, ARCEE_API_URL, ARCEE_API_VERSION, ARCEE_GENERATION_URL, ARCEE_RETRIEVAL_URL
+from arcee.api_handler import make_request
+from arcee.config import ARCEE_API_KEY, ARCEE_GENERATION_URL, ARCEE_RETRIEVAL_URL
+from arcee.schemas.routes import Route
 
 
 def check_model_status(name: str) -> dict[str, str]:
-    endpoint = f"{ARCEE_API_URL}/{ARCEE_API_VERSION}/train-model/status/{name}"
-
-    headers = {"X-Token": f"{ARCEE_API_KEY}", "Content-Type": "application/json"}
-
-    response = requests.get(endpoint, headers=headers)
-
-    if response.status_code != 200:
-        raise Exception(f"Failed to check retriever status. Response: {response.text}")
-    else:
-        return response.json()
+    route = Route.train_model_status.value.format(id_or_name=name)
+    return make_request("get", route)
 
 
 class DALM:

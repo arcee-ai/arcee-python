@@ -31,5 +31,5 @@ jobs:
       - name: Run inv lint
         run: inv lint
 
-#      - name: Run tests
-#        run: inv test
+      - name: Run tests
+        run: inv test
