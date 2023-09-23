@@ -29,7 +29,7 @@ class DALM:
         self.generate_url = config.ARCEE_GENERATION_URL
         self.retriever_url = config.ARCEE_RETRIEVAL_URL
 
-    @retry_call
+    @retry_call(wait_sec=0.5)
     def invoke(self, invocation_type: Literal["retrieve", "generate"], query: str, size: int) -> dict[str, Any]:
         url = self.retriever_url if invocation_type == "retrieve" else self.generate_url
         payload = {"model_id": self.model_id, "query": query, "size": size}
