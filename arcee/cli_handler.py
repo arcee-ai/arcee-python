@@ -9,7 +9,7 @@ from arcee import upload_docs
 from arcee.schemas.doc import Doc
 
 if not find_spec("pandas"):
-    raise ModuleNotFoundError("Cannot find pandas. Please run `pip install 'arcee[cli]'` for cli support")
+    raise ModuleNotFoundError("Cannot find pandas. Please run `pip install 'arcee-py[cli]'` for cli support")
 
 import pandas as pd
 
