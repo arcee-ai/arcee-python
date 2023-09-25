@@ -93,6 +93,14 @@ def context(
         Optional[list[Path]],
         typer.Option(help="Path to a document", exists=True, file_okay=True, dir_okay=False, readable=True),
     ] = None,
+    doc_name: Annotated[
+        str,
+        typer.Option(help="Column/key representing the doc name. Used if file is jsonl or csv", exists=True),
+    ] = "name",
+    doc_text: Annotated[
+        str,
+        typer.Option(help="Column/key representing the doc text. Used if file is jsonl or csv", exists=True),
+    ] = "text",
     directory: Annotated[
         Optional[list[Path]],
         typer.Option(
@@ -114,9 +122,11 @@ def context(
         file (Path): Path to the file.
         directory (Path): Path to the directory.
         chunk_size (int): The chunk size in megabytes (MB) to limit memory usage during file uploads.
+        doc_name (str): The name of the column/key representing the doc name. Used for csv/jsonl
+        doc_text (str): The name of the column/key representing the doc text/content. Used for csv/jsonl
     """
     if not file and not directory:
-        raise typer.BadParameter("Atleast one file or directory must be provided")
+        raise typer.BadParameter("At least one file or directory must be provided")
 
     if file is None:
         file = []
@@ -127,7 +137,7 @@ def context(
     file.extend(directory)
 
     try:
-        resp = UploadHandler.handle_doc_upload(name, file, chunk_size)
+        resp = UploadHandler.handle_doc_upload(name, file, chunk_size, doc_name, doc_text)
         typer.secho(resp)
     except Exception as e:
         raise ArceeException(message=f"Error uploading document(s): {e}") from e
