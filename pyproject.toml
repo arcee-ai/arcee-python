@@ -39,6 +39,11 @@ dev = [
     "pytest-env",
     "ruff",
     "types-requests",
+    "pandas",
+    "pandas-stubs"
+]
+cli = [
+    "pandas"
 ]
 
 [project.urls]

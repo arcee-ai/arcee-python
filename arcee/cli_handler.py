@@ -1,16 +1,23 @@
+from importlib.util import find_spec
 from pathlib import Path
 
 import typer
 from click import ClickException as ArceeException
 from rich.progress import Progress, SpinnerColumn, TextColumn
 
-from arcee import upload_doc, upload_docs
+from arcee import upload_docs
+from arcee.schemas.doc import Doc
+
+if not find_spec("pandas"):
+    raise ModuleNotFoundError("Cannot find pandas. Please run `pip install 'arcee-py[cli]'` for cli support")
+
+import pandas as pd
 
 
 class UploadHandler:
     """Upload data to Arcee platform"""
 
-    valid_context_file_extensions = set([".txt", ".jsonl"])
+    valid_context_file_extensions = {".txt", ".jsonl", ".csv"}
 
     one_kb = 1024
     one_mb = 1024 * one_kb
@@ -64,39 +71,61 @@ class UploadHandler:
         return list(set(all_paths))
 
     @classmethod
-    def _handle_upload(cls, name: str, files: list[Path], max_chunk_size: int) -> dict[str, str]:
+    def _get_docs(cls, file: Path, doc_name: str, doc_text: str) -> list[Doc]:
+        if file.suffix == ".txt":
+            return [Doc(doc_name=file.name, doc_text=file.read_text())]
+        if file.suffix == ".jsonl":
+            df = pd.read_json(file.name, lines=True)
+        elif file.suffix == ".csv":
+            df = pd.read_csv(file.name)
+        else:
+            raise ValueError(f"File type not valid. Must be one of {cls.valid_context_file_extensions}")
+        if doc_name not in df.columns:
+            raise ValueError(
+                f"{doc_name} not found in data column/key. Rename column/key or use "
+                f"--doc-name in comment to specify your own"
+            )
+        if doc_text not in df.columns:
+            raise ValueError(
+                f"{doc_text} not found in data column/key. Rename column/key or use "
+                f"--doc-text in comment to specify your own"
+            )
+        return [Doc(doc_name=row[doc_name], doc_text=row[doc_text]) for _, row in df.iterrows()]
+
+    @classmethod
+    def _handle_upload(
+        cls, name: str, files: list[Path], max_chunk_size: int, doc_name: str, doc_text: str
+    ) -> dict[str, str]:
         """Upload document file(s) to context
         Args:
             name str: Name of the context
             files list[Path]: tuple of paths to valid file(s).
             max_chunk_size int: Maximum memory, in bytes to use for uploading
         """
-
-        # if only one file is passed, upload it
-        if len(files) == 1:
-            file = files[0]
-            return upload_doc(context=name, doc_name=file.name, doc_text=file.read_text())
-
         docs: list[dict[str, str]] = []
         chunk: int = 0
         for file in files:
-            if chunk + file.stat().st_size > max_chunk_size:
+            if chunk + file.stat().st_size >= max_chunk_size:
                 if len(docs) == 0:
                     raise ArceeException(
-                        message=f"Memory Limit Exceeded."
-                        f" When uploading {file.name} ({file.stat().st_size/cls.one_mb} MB)."
-                        " Try increasing chunk size."
+                        message=f"Memory Limit Exceeded. "
+                        f"When uploading {file.name} ({file.stat().st_size/cls.one_mb} MB). "
+                        "Try increasing chunk size."
                     )
                 upload_docs(context=name, docs=docs)
                 chunk = 0
                 docs.clear()
             chunk += file.stat().st_size
-            docs.append({"doc_name": file.name, "doc_text": file.read_text()})
+            file_docs = cls._get_docs(file, doc_name, doc_text)
+            file_docs_json = [doc.dict() for doc in file_docs]
+            docs.extend(file_docs_json)
 
         return upload_docs(context=name, docs=docs)
 
     @classmethod
-    def handle_doc_upload(cls, name: str, paths: list[Path], chunk_size: int) -> dict[str, str]:
+    def handle_doc_upload(
+        cls, name: str, paths: list[Path], chunk_size: int, doc_name: str, doc_text: str
+    ) -> dict[str, str]:
         """Handle document upload from valid paths to files and directories
 
         Args:
@@ -126,6 +155,8 @@ class UploadHandler:
 
             # upload documents
             uploading = progress.add_task(description=f"Uploading {len(paths)} document(s)...", total=len(files))
-            resp = doc_uploader(name=name, files=files, max_chunk_size=chunk_size * ONE_MB)
+            resp = doc_uploader(
+                name=name, files=files, max_chunk_size=chunk_size * ONE_MB, doc_name=doc_name, doc_text=doc_text
+            )
             progress.update(uploading, description=f"✅ Uploaded {len(paths)} document(s) to context {name}")
             return resp
