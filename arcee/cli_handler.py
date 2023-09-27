@@ -90,7 +90,7 @@ class UploadHandler:
                 f"{doc_text} not found in data column/key. Rename column/key or use "
                 f"--doc-text in comment to specify your own"
             )
-        return [Doc(doc_name=row[doc_name], doc_text=row[doc_text]) for _, row in df.iterrows()]
+        return [Doc(doc_name=row.pop(doc_name), doc_text=row.pop(doc_text), **dict(row)) for _, row in df.iterrows()]
 
     @classmethod
     def _handle_upload(
