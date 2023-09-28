@@ -17,6 +17,7 @@ dependencies = [
     "requests",
     "typer",
     "rich",
+    "pydantic"
 ]
 
 [project.scripts]
@@ -88,6 +89,7 @@ ban-relative-imports = "all"
 
 [tool.mypy]
 disallow_untyped_defs = true
+plugins = "pydantic.mypy"
 
 [[tool.mypy.overrides]]
 module = "retrying.*"
