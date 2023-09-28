@@ -8,3 +8,5 @@ class Route(str, Enum):
     train_retriever = "retrievers/train"
     train_retriever_status = "retrievers/status/{id_or_name}"
     identity = "whoami"
+    retrieve = "models/retrieve"
+    generate = "models/generate"

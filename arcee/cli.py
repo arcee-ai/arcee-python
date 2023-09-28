@@ -117,6 +117,9 @@ def context(
     """Upload document(s) to context. If a directory is provided, all valid files in the directory will be uploaded.
     At least one of file or directory must be provided.
 
+    If you are using CSV or jsonl file(s), every key/column in your dataset that isn't that of `doc_name` and `doc_text`
+    will be uploaded as extra metadata fields with your doc. These can be used for filtering on generation and retrieval
+
     Args:
         name (str): Name of the context
         file (Path): Path to the file.

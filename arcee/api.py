@@ -6,7 +6,7 @@ from arcee.dalm import DALM, check_model_status
 from arcee.schemas.routes import Route
 
 
-def upload_doc(context: str, doc_name: str, doc_text: str) -> dict[str, str]:
+def upload_doc(context: str, doc_name: str, doc_text: str, **kwargs: dict[str, int | float | str]) -> dict[str, str]:
     """
     Upload a document to a context
 
@@ -14,8 +14,9 @@ def upload_doc(context: str, doc_name: str, doc_text: str) -> dict[str, str]:
         context (str): The name of the context to upload to
         doc_name (str): The name of the document
         doc_text (str): The text of the document
+        kwargs: Any other key:value pairs to be included as extra metadata along with your doc
     """
-    doc = {"name": doc_name, "document": doc_text}
+    doc = {"name": doc_name, "document": doc_text, "meta": kwargs}
     data = {"context_name": context, "documents": [doc]}
     return make_request("post", Route.contexts, data)
 
@@ -27,13 +28,20 @@ def upload_docs(context: str, docs: list[dict[str, str]]) -> dict[str, str]:
     Args:
         context (str): The name of the context to upload to
         docs (list): A list of dictionaries with keys "doc_name" and "doc_text"
+
+        Any other keys in the `docs` will be assumed as metadata, and will be uploaded as such. This metadata can
+            be filtered on during retrieval and generation.
     """
     doc_list = []
     for doc in docs:
         if "doc_name" not in doc.keys() or "doc_text" not in doc.keys():
             raise Exception("Each document must have a doc_name and doc_text key")
 
-        doc_list.append({"name": doc["doc_name"], "document": doc["doc_text"]})
+        new_doc: dict[str, str | dict] = {"name": doc.pop("doc_name"), "document": doc.pop("doc_text")}
+        # Any other keys are metadata
+        if doc:
+            new_doc["meta"] = doc
+        doc_list.append(new_doc)
 
     data = {"context_name": context, "documents": doc_list}
     return make_request("post", Route.contexts, data)
