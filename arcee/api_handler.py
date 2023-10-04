@@ -1,6 +1,6 @@
 from functools import wraps
 from time import sleep
-from typing import Any, Callable, Literal, Optional, TypeVar, Union
+from typing import Any, Callable, Dict, Literal, Optional, TypeVar, Union
 
 import requests
 from typing_extensions import ParamSpec
@@ -37,10 +37,10 @@ def retry_call(*, max_attempts: int = 2, wait_sec: Union[float, int] = 5) -> Cal
 def make_request(
     request: Literal["post", "get"],
     route: Union[str, Route],
-    body: Optional[dict[str, Any]] = None,
-    params: Optional[dict[str, Any]] = None,
-    headers: Optional[dict[str, Any]] = None,
-) -> dict[str, str]:
+    body: Optional[Dict[str, Any]] = None,
+    params: Optional[Dict[str, Any]] = None,
+    headers: Optional[Dict[str, Any]] = None,
+) -> Dict[str, str]:
     """Makes the request"""
     headers = headers or {}
     internal_headers = {"X-Token": f"{config.ARCEE_API_KEY}", "Content-Type": "application/json"}

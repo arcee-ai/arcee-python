@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, Literal, Optional
+from typing import Any, Dict, List, Literal, Optional
 
 from pydantic import BaseModel, model_validator
 
@@ -7,7 +7,7 @@ from arcee.api_handler import make_request
 from arcee.schemas.routes import Route
 
 
-def check_model_status(name: str) -> dict[str, str]:
+def check_model_status(name: str) -> Dict[str, str]:
     route = Route.train_model_status.value.format(id_or_name=name)
     return make_request("get", route)
 
@@ -58,13 +58,13 @@ class DALM:
             raise Exception("DALM model is not ready. Please wait for training to complete.")
 
     def invoke(
-        self, invocation_type: Literal["retrieve", "generate"], query: str, size: int, filters: list[dict]
-    ) -> dict[str, Any]:
+        self, invocation_type: Literal["retrieve", "generate"], query: str, size: int, filters: List[Dict]
+    ) -> Dict[str, Any]:
         route = Route.retrieve if invocation_type == "retrieve" else Route.generate
         payload = {"model_id": self.model_id, "query": query, "size": size, "filters": filters, "id": self.model_id}
         return make_request("post", route, body=payload)
 
-    def retrieve(self, query: str, size: int = 3, filters: Optional[list[DALMFilter]] = None) -> dict:
+    def retrieve(self, query: str, size: int = 3, filters: Optional[List[DALMFilter]] = None) -> Dict:
         """Retrieve {size} contexts with your retriever for the given query
 
         Arguments:
@@ -77,7 +77,7 @@ class DALM:
         ret_filters = [DALMFilter.model_validate(f).model_dump() for f in filters]
         return self.invoke("retrieve", query, size, ret_filters)
 
-    def generate(self, query: str, size: int = 3, filters: Optional[list[DALMFilter]] = None) -> dict:
+    def generate(self, query: str, size: int = 3, filters: Optional[List[DALMFilter]] = None) -> Dict:
         """Generate a response using {size} contexts with your generator for the given query
 
         Arguments:
