@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from arcee import config
 from arcee.api_handler import make_request
@@ -6,7 +6,9 @@ from arcee.dalm import DALM, check_model_status
 from arcee.schemas.routes import Route
 
 
-def upload_doc(context: str, doc_name: str, doc_text: str, **kwargs: dict[str, int | float | str]) -> dict[str, str]:
+def upload_doc(
+    context: str, doc_name: str, doc_text: str, **kwargs: dict[str, Union[int, float, str]]
+) -> dict[str, str]:
     """
     Upload a document to a context
 
@@ -37,7 +39,7 @@ def upload_docs(context: str, docs: list[dict[str, str]]) -> dict[str, str]:
         if "doc_name" not in doc.keys() or "doc_text" not in doc.keys():
             raise Exception("Each document must have a doc_name and doc_text key")
 
-        new_doc: dict[str, str | dict] = {"name": doc.pop("doc_name"), "document": doc.pop("doc_text")}
+        new_doc: dict[str, Union[str, dict]] = {"name": doc.pop("doc_name"), "document": doc.pop("doc_text")}
         # Any other keys are metadata
         if doc:
             new_doc["meta"] = doc

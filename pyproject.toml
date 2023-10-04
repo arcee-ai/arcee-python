@@ -7,7 +7,7 @@ build-backend = "hatchling.build"
 name = "arcee-py"
 authors = [{name = "Jacob Solowetz", email = "jacob@arcee.ai"}, {name = "Ben Epstein", email = "ben@arcee.ai"}]
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.8"
 license = {text = "MIT"}
 dynamic = ["version", "description"]
 packages = [
