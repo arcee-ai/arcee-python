@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 import typer
 from click import ClickException as ArceeException
@@ -90,7 +90,7 @@ upload = typer.Typer(help="Upload data to Arcee platform")
 def context(
     name: Annotated[str, typer.Argument(help="Name of the context")],
     file: Annotated[
-        Optional[list[Path]],
+        Optional[List[Path]],
         typer.Option(help="Path to a document", exists=True, file_okay=True, dir_okay=False, readable=True),
     ] = None,
     doc_name: Annotated[
@@ -102,7 +102,7 @@ def context(
         typer.Option(help="Column/key representing the doc text. Used if file is jsonl or csv", exists=True),
     ] = "text",
     directory: Annotated[
-        Optional[list[Path]],
+        Optional[List[Path]],
         typer.Option(
             help="Path to a directory",
             exists=True,
@@ -150,11 +150,11 @@ def context(
 def vocabulary(
     name: Annotated[str, typer.Argument(help="Name of the context")],
     file: Annotated[
-        Optional[list[Path]],
+        Optional[List[Path]],
         typer.Option(help="Path to a document", exists=True, file_okay=True, dir_okay=False, readable=True),
     ] = None,
     directory: Annotated[
-        Optional[list[Path]],
+        Optional[List[Path]],
         typer.Option(
             help="Path to a directory",
             exists=True,

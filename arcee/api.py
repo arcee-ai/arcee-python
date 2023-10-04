@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Dict, List, Optional, Union
 
 from arcee import config
 from arcee.api_handler import make_request
@@ -7,8 +7,8 @@ from arcee.schemas.routes import Route
 
 
 def upload_doc(
-    context: str, doc_name: str, doc_text: str, **kwargs: dict[str, Union[int, float, str]]
-) -> dict[str, str]:
+    context: str, doc_name: str, doc_text: str, **kwargs: Dict[str, Union[int, float, str]]
+) -> Dict[str, str]:
     """
     Upload a document to a context
 
@@ -23,7 +23,7 @@ def upload_doc(
     return make_request("post", Route.contexts, data)
 
 
-def upload_docs(context: str, docs: list[dict[str, str]]) -> dict[str, str]:
+def upload_docs(context: str, docs: List[Dict[str, str]]) -> Dict[str, str]:
     """
     Upload a list of documents to a context
 
@@ -39,7 +39,7 @@ def upload_docs(context: str, docs: list[dict[str, str]]) -> dict[str, str]:
         if "doc_name" not in doc.keys() or "doc_text" not in doc.keys():
             raise Exception("Each document must have a doc_name and doc_text key")
 
-        new_doc: dict[str, Union[str, dict]] = {"name": doc.pop("doc_name"), "document": doc.pop("doc_text")}
+        new_doc: Dict[str, Union[str, Dict]] = {"name": doc.pop("doc_name"), "document": doc.pop("doc_text")}
         # Any other keys are metadata
         if doc:
             new_doc["meta"] = doc
@@ -62,7 +62,7 @@ def train_dalm(
     )
 
 
-def get_dalm_status(id_or_name: str) -> dict[str, str]:
+def get_dalm_status(id_or_name: str) -> Dict[str, str]:
     """Gets the status of a DALM training job"""
     return check_model_status(id_or_name)
 
