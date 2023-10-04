@@ -11,10 +11,10 @@ jobs:
   test_lint:
     runs-on: ubuntu-latest
 
-  strategy:
-    matrix:
-      python-version: [ "3.8", "3.9", "3.10" ]
-    fail-fast: false
+    strategy:
+      matrix:
+        python-version: [ "3.8", "3.9", "3.10" ]
+      fail-fast: false
 
     steps:
       - name: Checkout code
