@@ -60,7 +60,7 @@ class DALM:
     def invoke(
         self, invocation_type: Literal["retrieve", "generate"], query: str, size: int, filters: List[Dict]
     ) -> Dict[str, Any]:
-        route = Route.retrieve if invocation_type == "retrieve" else Route.generate
+        route = Route.retrieve.value if invocation_type == "retrieve" else Route.generate.value
         payload = {"model_id": self.model_id, "query": query, "size": size, "filters": filters, "id": self.model_id}
         return make_request("post", route, body=payload)
 

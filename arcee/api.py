@@ -20,7 +20,7 @@ def upload_doc(
     """
     doc = {"name": doc_name, "document": doc_text, "meta": kwargs}
     data = {"context_name": context, "documents": [doc]}
-    return make_request("post", Route.contexts, data)
+    return make_request("post", Route.contexts.value, data)
 
 
 def upload_docs(context: str, docs: List[Dict[str, str]]) -> Dict[str, str]:
@@ -46,14 +46,14 @@ def upload_docs(context: str, docs: List[Dict[str, str]]) -> Dict[str, str]:
         doc_list.append(new_doc)
 
     data = {"context_name": context, "documents": doc_list}
-    return make_request("post", Route.contexts, data)
+    return make_request("post", Route.contexts.value, data)
 
 
 def train_dalm(
     name: str, context: Optional[str] = None, instructions: Optional[str] = None, generator: str = "Command"
 ) -> None:
     data = {"name": name, "context": context, "instructions": instructions, "generator": generator}
-    make_request("post", Route.train_model, data)
+    make_request("post", Route.train_model.value, data)
     org = get_current_org()
     status_url = f"{config.ARCEE_APP_URL}/{org}/models/{name}/training"
     print(
@@ -68,7 +68,7 @@ def get_dalm_status(id_or_name: str) -> Dict[str, str]:
 
 
 def get_current_org() -> str:
-    return make_request("get", Route.identity)["org"]
+    return make_request("get", Route.identity.value)["org"]
 
 
 def get_dalm(name: str) -> DALM:
