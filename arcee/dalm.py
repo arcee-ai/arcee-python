@@ -1,7 +1,7 @@
-from strenum import StrEnum
 from typing import Any, Dict, List, Literal, Optional
 
 from pydantic import BaseModel, model_validator
+from strenum import StrEnum
 
 from arcee.api_handler import make_request
 from arcee.schemas.routes import Route
