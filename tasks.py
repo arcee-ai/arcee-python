@@ -1,4 +1,5 @@
-from enum import Enum, unique
+from enum import unique
+from strenum import StrEnum
 from typing import Optional
 
 from invoke import task
@@ -171,7 +172,7 @@ def all(ctx: Context) -> None:
 
 
 @unique
-class BumpType(Enum):
+class BumpType(StrEnum):
     MAJOR = "major"
     MINOR = "minor"
 
