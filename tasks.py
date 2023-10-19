@@ -189,9 +189,9 @@ def _bump_version(version: str, bump: Optional[BumpType] = None) -> str:
     from packaging.version import Version
 
     v = Version(version)
-    if bump == BumpType.MAJOR:
+    if bump == BumpType.MAJOR.value:
         v = Version(f"{v.major + 1}.0.0")
-    elif bump == BumpType.MINOR:
+    elif bump == BumpType.MINOR.value:
         v = Version(f"{v.major}.{v.minor + 1}.0")
     else:
         v = Version(f"{v.major}.{v.minor}.{v.micro + 1}")
