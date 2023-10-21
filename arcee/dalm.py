@@ -1,7 +1,7 @@
-from enum import Enum
 from typing import Any, Dict, List, Literal, Optional
 
 from pydantic import BaseModel, model_validator
+from strenum import StrEnum
 
 from arcee.api_handler import make_request
 from arcee.schemas.routes import Route
@@ -12,7 +12,7 @@ def check_model_status(name: str) -> Dict[str, str]:
     return make_request("get", route)
 
 
-class FilterType(str, Enum):
+class FilterType(StrEnum):
     fuzzy_search = "fuzzy_search"
     strict_search = "strict_search"
 

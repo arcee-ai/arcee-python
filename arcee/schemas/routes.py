@@ -1,7 +1,7 @@
-from enum import Enum
+from strenum import StrEnum
 
 
-class Route(str, Enum):
+class Route(StrEnum):
     contexts = "contexts"
     train_model = "models/train"
     train_model_status = "models/status/{id_or_name}"

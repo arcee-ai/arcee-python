@@ -17,7 +17,8 @@ dependencies = [
     "requests",
     "typer",
     "rich",
-    "pydantic"
+    "pydantic",
+    "StrEnum"
 ]
 
 [project.scripts]
