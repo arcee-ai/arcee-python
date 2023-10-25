@@ -17,7 +17,7 @@ dependencies = [
     "requests",
     "typer",
     "rich",
-    "pydantic",
+    "pydantic>=2.4.2,<3.0",
     "StrEnum"
 ]
 
