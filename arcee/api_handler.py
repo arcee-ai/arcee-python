@@ -17,6 +17,22 @@ def retry_call(*, max_attempts: int = 2, wait_sec: Union[float, int] = 5) -> Cal
     assert wait_sec > 0, "wait_sec must be > 0"
 
     def retry_wrapper(func: Callable[P, T]) -> Callable[P, T]:
+        """
+        A decorator that wraps a function and retries it multiple times in case of exceptions.
+
+        Args:
+            func (Callable[P, T]): The function to be wrapped.
+
+        Returns:
+            Callable[P, T]: The decorated function.
+
+        Raises:
+            Exception: If the function still raises an exception after the maximum number of attempts.
+
+        Note:
+            This decorator is useful for handling functions that may fail intermittently due to external factors.
+        """
+
         @wraps(func)
         def decorator(*args: P.args, **kwargs: P.kwargs) -> T:
             exception = ""

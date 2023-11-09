@@ -8,11 +8,32 @@ from arcee.schemas.routes import Route
 
 
 def check_model_status(name: str) -> Dict[str, str]:
+    """
+        Checks the status of a model.
+
+        Args:
+            name (str): The name of the model.
+
+        Returns:
+            Dict[str, str]: A dictionary containing the status of the model.
+
+        Examples:
+            >>> check_model_status("model_1")
+            {'status': 'running'}
+        """
+
     route = Route.train_model_status.value.format(id_or_name=name) + "?allow_demo=True"
     return make_request("get", route)
 
 
 class FilterType(StrEnum):
+    """
+    An enumeration class representing different filter types.
+
+    Attributes:
+        fuzzy_search (str): Represents the fuzzy search filter type.
+        strict_search (str): Represents the strict search filter type.
+    """
     fuzzy_search = "fuzzy_search"
     strict_search = "strict_search"
 
@@ -46,6 +67,21 @@ class DALMFilter(BaseModel):
 
 
 class DALM:
+    """
+    A class representing a DALM (Deep Active Learning Model).
+
+    Args:
+        name (str): The name of the DALM model.
+
+    Raises:
+        Exception: If the DALM model is not ready.
+
+    Methods:
+        invoke(invocation_type, query, size, filters): Invokes the DALM model with the specified invocation type, query, size, and filters.
+        retrieve(query, size=3, filters=None): Retrieves contexts using the retriever for the given query.
+        generate(query, size=3, filters=None): Generates a response using the generator for the given query.
+    """
+
     def __init__(self, name: str) -> None:
         self.name = name
 
@@ -60,32 +96,61 @@ class DALM:
     def invoke(
         self, invocation_type: Literal["retrieve", "generate"], query: str, size: int, filters: List[Dict]
     ) -> Dict[str, Any]:
+        """
+        Invokes the DALM model with the specified invocation type, query, size, and filters.
+
+        Args:
+            invocation_type (Literal["retrieve", "generate"]): The type of invocation to perform.
+            query (str): The question to submit to the model.
+            size (int): The maximum number of context results to retrieve or generate.
+            filters (List[Dict]): Optional filters to include with the query.
+
+        Returns:
+            Dict[str, Any]: A dictionary containing the response from the DALM model.
+        """
+
         route = Route.retrieve if invocation_type == "retrieve" else Route.generate
         payload = {"model_id": self.model_id, "query": query, "size": size, "filters": filters, "id": self.model_id}
         return make_request("post", route, body=payload)
 
     def retrieve(self, query: str, size: int = 3, filters: Optional[List[DALMFilter]] = None) -> Dict:
-        """Retrieve {size} contexts with your retriever for the given query
-
-        Arguments:
-            query: The question to submit to the model
-            size: The max number of context results to retrieve (can be less if filters are provided)
-            filters: Optional filters to include with the query. This will restrict which context data the model can
-                retrieve from the context dataset
         """
+        Retrieves contexts using the retriever for the given query.
+
+        Args:
+            query (str): The question to submit to the model.
+            size (int, optional): The maximum number of context results to retrieve. Defaults to 3.
+            filters (Optional[List[DALMFilter]], optional): Optional filters to include with the query. Defaults to None.
+
+        Returns:
+            Dict: A dictionary containing the retrieved contexts.
+
+        Example:
+            >>> retrieve("What is the capital of France?")
+            {'contexts': ['Paris is the capital of France.', 'The capital of France is Paris.']}
+        """
+
         filters = filters or []
         ret_filters = [DALMFilter.model_validate(f).model_dump() for f in filters]
         return self.invoke("retrieve", query, size, ret_filters)
 
     def generate(self, query: str, size: int = 3, filters: Optional[List[DALMFilter]] = None) -> Dict:
-        """Generate a response using {size} contexts with your generator for the given query
-
-        Arguments:
-            query: The question to submit to the model
-            size: The max number of context results to retrieve (can be less if filters are provided)
-            filters: Optional filters to include with the query. This will restrict which context data the model can
-                retrieve from the context dataset
         """
+        Generates a response using the generator for the given query.
+
+        Args:
+            query (str): The question to submit to the model.
+            size (int, optional): The maximum number of context results to retrieve. Defaults to 3.
+            filters (Optional[List[DALMFilter]], optional): Optional filters to include with the query. Defaults to None.
+
+        Returns:
+            Dict: A dictionary containing the generated response.
+
+        Example:
+            >>> generate("What is the capital of France?")
+            {'response': 'The capital of France is Paris.'}
+        """
+
         filters = filters or []
         gen_filters = [DALMFilter.model_validate(f).model_dump() for f in filters]
         return self.invoke("generate", query, size, gen_filters)
