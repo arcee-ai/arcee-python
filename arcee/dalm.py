@@ -8,7 +8,7 @@ from arcee.schemas.routes import Route
 
 
 def check_model_status(name: str) -> Dict[str, str]:
-    route = Route.train_model_status.value.format(id_or_name=name) + "?allow_demo=True"
+    route = Route.train_model_status.value.format(id_or_name=name)
     return make_request("get", route)
 
 
