@@ -10,3 +10,4 @@ class Route(StrEnum):
     identity = "whoami"
     retrieve = "models/retrieve"
     generate = "models/generate"
+    corpus_upload = "corpus/upload"
