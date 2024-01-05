@@ -48,7 +48,7 @@ def upload_docs(context: str, docs: List[Dict[str, str]]) -> Dict[str, str]:
     data = {"context_name": context, "documents": doc_list}
     return make_request("post", Route.contexts, data)
 
-def upload_corpus_file(corpus: str, file_s3_url: str) -> Dict[str, str]:
+def upload_corpus_folder(corpus: str, s3_folder_url: str) -> Dict[str, str]:
     """
     Upload a corpus file to a context
 
@@ -57,12 +57,12 @@ def upload_corpus_file(corpus: str, file_s3_url: str) -> Dict[str, str]:
         file_s3_url (str): The S3 url of the file to upload
     """
 
-    if not file_s3_url.startswith("s3://"):
-        raise Exception("file_s3_url must be an S3 url")
+    if not s3_folder_url.startswith("s3://"):
+        raise Exception("folder_s3_url must be an S3 url")
 
-    data = {"corpus_name": corpus, "file_s3_url": file_s3_url}
+    data = {"corpus_name": corpus, "s3_folder_url": s3_folder_url}
 
-    return make_request("post", Route.corpus_upload, data)
+    return make_request("post", Route.pretraining+"/corpusUpload", data)
 
 def train_dalm(
     name: str, context: Optional[str] = None, instructions: Optional[str] = None, generator: str = "Command"
