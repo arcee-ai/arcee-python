@@ -64,6 +64,20 @@ def upload_corpus_folder(corpus: str, s3_folder_url: str) -> Dict[str, str]:
 
     return make_request("post", Route.pretraining+"/corpusUpload", data)
 
+def start_pretraining(pretraining_name: str, corpus: str, base_model: str) -> None:
+    """
+    Start pretraining a model
+
+    Args:
+        pretraining_name (str): The name of the pretraining job
+        corpus (str): The name of the corpus to use
+        base_model (str): The name of the base model to use
+    """
+
+    data = {"pretraining_name": pretraining_name, "corpus_name": corpus, "base_model": base_model}
+
+    return make_request("post", Route.pretraining+"/startTraining", data)
+
 def upload_qa_pairs(qa_set: str, qa_pairs: List[Dict[str, str]]) -> Dict[str, str]:
     """
     Upload a list of QA pairs to a specific QA set.
@@ -87,6 +101,20 @@ def upload_qa_pairs(qa_set: str, qa_pairs: List[Dict[str, str]]) -> Dict[str, st
 
     data = {"qa_set_name": qa_set, "qa_pairs": qa_list}
     return make_request("post", Route.alignment+"/qaUpload", data)
+
+def start_alignment(alignment_name: str, qa_set: str, pretrained_model: str) -> None:
+    """
+    Start alignment of a model
+
+    Args:
+        alignment_name (str): The name of the alignment job
+        qa_set (str): The name of the QA set to use
+        pretrained_model (str): The name of the pretrained model to use
+    """
+
+    data = {"alignment_name": alignment_name, "qa_set_name": qa_set, "pretrained_model": pretrained_model}
+
+    return make_request("post", Route.alignment+"/startAlignment", data)
 
 def train_dalm(
     name: str, context: Optional[str] = None, instructions: Optional[str] = None, generator: str = "Command"
