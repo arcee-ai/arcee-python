@@ -64,6 +64,30 @@ def upload_corpus_folder(corpus: str, s3_folder_url: str) -> Dict[str, str]:
 
     return make_request("post", Route.pretraining+"/corpusUpload", data)
 
+def upload_qa_pairs(qa_set: str, qa_pairs: List[Dict[str, str]]) -> Dict[str, str]:
+    """
+    Upload a list of QA pairs to a specific QA set.
+
+    Args:
+        qa_set (str): The name of the QA set to upload to.
+        qa_pairs (list): A list of dictionaries with keys "question" and "answer".
+
+    Returns:
+        Dict[str, str]: The response from the make_request call.
+    """
+    if len(qa_pairs) > 2000:
+        raise Exception("You can only upload 2000 QA pairs at a time")  
+
+    qa_list = []
+    for qa in qa_pairs:
+        if "question" not in qa or "answer" not in qa:
+            raise Exception("Each QA pair must have a 'question' and an 'answer' key")
+
+        qa_list.append({"question": qa["question"], "answer": qa["answer"]})
+
+    data = {"qa_set_name": qa_set, "qa_pairs": qa_list}
+    return make_request("post", Route.alignment+"/qaUpload", data)
+
 def train_dalm(
     name: str, context: Optional[str] = None, instructions: Optional[str] = None, generator: str = "Command"
 ) -> None:
