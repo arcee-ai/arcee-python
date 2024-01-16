@@ -36,6 +36,7 @@ def upload_docs(context: str, docs: List[Dict[str, str]]) -> Dict[str, str]:
     """
     doc_list = []
     for doc in docs:
+        print(doc.keys())
         if "doc_name" not in doc.keys() or "doc_text" not in doc.keys():
             raise Exception("Each document must have a doc_name and doc_text key")
 
@@ -128,6 +129,18 @@ def train_dalm(
         f'When training is finished, get your DALM with arcee.get_dalm("{name}")'
     )
 
+def start_retriever_training(name: str, context: str):
+    data = {"name": name, "context": context}
+    make_request("post", Route.train_model, data)
+    org = get_current_org()
+    status_url = f"{config.ARCEE_APP_URL}/{org}/models/{name}/training"
+    print(
+        f'Retriever model training started - view model status at {status_url} or with arcee.get_retriever_status("{name}")'
+    )
+
+def get_retriever_status(id_or_name: str) -> Dict[str, str]:
+    """Gets the status of a retriever training job"""
+    return check_model_status(id_or_name)
 
 def get_dalm_status(id_or_name: str) -> Dict[str, str]:
     """Gets the status of a DALM training job"""
