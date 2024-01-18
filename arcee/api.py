@@ -36,7 +36,6 @@ def upload_docs(context: str, docs: List[Dict[str, str]]) -> Dict[str, str]:
     """
     doc_list = []
     for doc in docs:
-        print(doc.keys())
         if "doc_name" not in doc.keys() or "doc_text" not in doc.keys():
             raise Exception("Each document must have a doc_name and doc_text key")
 
