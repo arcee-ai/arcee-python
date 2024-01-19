@@ -12,3 +12,4 @@ class Route(StrEnum):
     generate = "models/generate"
     pretraining = "pretraining"
     alignment = "alignment"
+    deployment = "deployment"
