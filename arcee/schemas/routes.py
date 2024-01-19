@@ -10,3 +10,6 @@ class Route(StrEnum):
     identity = "whoami"
     retrieve = "models/retrieve"
     generate = "models/generate"
+    pretraining = "pretraining"
+    alignment = "alignment"
+    deployment = "deployment"

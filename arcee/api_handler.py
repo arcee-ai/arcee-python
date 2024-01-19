@@ -33,7 +33,7 @@ def retry_call(*, max_attempts: int = 2, wait_sec: Union[float, int] = 5) -> Cal
     return retry_wrapper
 
 
-@retry_call()
+#@retry_call()
 def make_request(
     request: Literal["post", "get"],
     route: Union[str, Route],
