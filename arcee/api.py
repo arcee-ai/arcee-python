@@ -84,6 +84,18 @@ def start_pretraining(pretraining_name: str, corpus: str, base_model: str) -> No
 
     return make_request("post", Route.pretraining+"/startTraining", data)
 
+def delete_corpus(corpus: str) -> None:
+    """
+    Delete a corpus
+
+    Args:
+        corpus (str): The name of the corpus to delete
+    """
+
+    data = {"corpus_name": corpus}
+
+    return make_request("post", Route.pretraining+"/deleteCorpus", data)
+
 def start_alignment(alignment_name: str, qa_set: str, pretrained_model: str) -> None:
     """
     Start alignment of a model
