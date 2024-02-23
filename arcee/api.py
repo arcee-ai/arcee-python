@@ -123,7 +123,7 @@ def get_retriever_status(id_or_name: str) -> Dict[str, str]:
     """Gets the status of a retriever training job"""
     return check_model_status(id_or_name)
 
-def start_deployment(deployment_name: str, alignment: Optional[str], retriever: Optional[str] = None):
+def start_deployment(deployment_name: str, alignment: Optional[str] = None, retriever: Optional[str] = None):
     data = {"deployment_name": deployment_name, "alignment_name": alignment, "retriever_name": retriever}
     return make_request("post", Route.deployment+"/startDeployment", data)
 
