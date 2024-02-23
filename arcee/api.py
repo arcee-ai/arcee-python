@@ -131,12 +131,12 @@ def stop_deployment(deployment_name: str):
     data = {"deployment_name": deployment_name}
     return make_request("post", Route.deployment+"/stopDeployment", data)
 
-def generate(deployment_id: str, query: str):
-    data = {"deployment_id": deployment_id, "query": query}
+def generate(deployment_name: str, query: str):
+    data = {"deployment_name": deployment_name, "query": query}
     return make_request("post", Route.deployment+"/generate", data)
 
-def retrieve(deployment_id: id, query: str):
-    data = {"id": deployment_id, "query": query}
+def retrieve(deployment_name: str, query: str):
+    data = {"deployment_name": deployment_name, "query": query}
     return make_request("post", Route.deployment+"/retrieve", data)
 
 def embed(deployment_name: str, query: str):
