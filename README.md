@@ -1,6 +1,6 @@
 # DALM by Arcee
 
-The Arcee client for executing domain-adpated language model routines
+The Arcee client for executing domain-adapted language model routines
 
 ![Arcee DALMs](https://uploads-ssl.webflow.com/64c95915793c8a64a186e43e/64de2c7fb2c99494dec2e0a4_realistic-lifelike-dalmatian-dog-puppy-pastel-bright-vintage-outfits-commercial%201-min.jpg)
 
