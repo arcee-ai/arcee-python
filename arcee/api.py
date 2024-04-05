@@ -110,6 +110,10 @@ def start_alignment(alignment_name: str, qa_set: str, pretrained_model: str) -> 
 
     return make_request("post", Route.alignment+"/startAlignment", data)
 
+def upload_alignment(alignment_name: str, alignment_id: str, qa_set_id: str, pretraining_id: str) -> None:
+    data = {"alignment_name": alignment_name, "alignment_id": alignment_id, "qa_set_id": qa_set_id, "pretraining_id": pretraining_id}
+    return make_request("post", Route.alignment+"/uploadAlignment", data)
+
 def start_retriever_training(name: str, context: str):
     data = {"name": name, "context": context}
     make_request("post", Route.train_model, data)
