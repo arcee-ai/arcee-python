@@ -21,14 +21,8 @@ dependencies = [
     "StrEnum"
 ]
 
-[project.packages]
-include = ["arcee"]
-
 [tool.hatch.build.targets.wheel]
 packages = ["arcee"]
-
-[tool.hatch.version]
-path = "arcee/__init__.py"
 
 [tool.hatch.version]
 path = "arcee/__init__.py"
