@@ -139,8 +139,8 @@ def generate(deployment_name: str, query: str):
     data = {"deployment_name": deployment_name, "query": query}
     return make_request("post", Route.deployment+"/generate", data)
 
-def retrieve(deployment_name: str, query: str):
-    data = {"deployment_name": deployment_name, "query": query}
+def retrieve(deployment_name: str, query: str, size: Optional[int] = 5):
+    data = {"deployment_name": deployment_name, "query": query, "size": size}
     return make_request("post", Route.deployment+"/retrieve", data)
 
 def embed(deployment_name: str, query: str):
