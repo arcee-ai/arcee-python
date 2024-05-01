@@ -1,4 +1,4 @@
-# DALM by Arcee
+# Arcee Client Docs
 
 The Arcee client for executing domain-adpated language model routines
 
