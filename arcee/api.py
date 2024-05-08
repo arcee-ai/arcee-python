@@ -84,6 +84,25 @@ def start_pretraining(pretraining_name: str, corpus: str, base_model: str) -> No
 
     return make_request("post", Route.pretraining+"/startTraining", data)
 
+def start_merging(merging_name: str, arcee_models: Optional[List[str]] = None, hf_models: Optional[List[str]] = None, qa_set_ids: Optional[List[str]] = None, general_evals: Optional[List[str]] = None, base_model: Optional[str] = None, merge_method: Optional[str] = None, time_budget: int = 1) -> None:
+    """
+    Start merging models
+
+    Args:
+        merging_name (str): The name of the merging job
+        arcee_models (list): A list of ARCEE models to merge
+        hf_models (list): A list of Hugging Face models to merge
+        qa_set_ids (list): A list of QA sets to merge
+        general_evals (list): A list of general evaluations to merge
+        base_model (str): The name of the base model to use
+        merge_method (str): The merging method to use
+        time_budget (int): The time budget for the merging job (hourss)
+    """
+
+    data = {"name": merging_name, "arcee_models": arcee_models, "hf_models": hf_models, "qa_set_ids": qa_set_ids, "general_evals": general_evals, "base_model": base_model, "merge_method": merge_method, "time_budget": time_budget}
+
+    return make_request("post", Route.merging+"/startMerging", data)
+
 def delete_corpus(corpus: str) -> None:
     """
     Delete a corpus

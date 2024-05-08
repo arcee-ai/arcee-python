@@ -49,6 +49,6 @@ def make_request(
 
     req_type = getattr(requests, request)
     response = req_type(url, json=body, params=params, headers=headers)
-    if response.status_code not in (200, 201):
+    if response.status_code not in (200, 201, 202):
         raise Exception(f"Failed to make request. Response: {response.text}")
     return response.json()
