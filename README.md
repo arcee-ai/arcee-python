@@ -25,6 +25,12 @@ import os
 os.environ["ARCEE_API_KEY"] = "********"
 ```
 
+To customize the URL of the arcee platform:
+
+```
+export ARCEE_API_URL="https://your-url.arcee.ai"
+```
+
 ## Upload Context
 
 Upload context for your domain adapted langauge model to draw from.
