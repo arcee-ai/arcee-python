@@ -45,7 +45,8 @@ def make_request(
     headers = headers or {}
     internal_headers = {"X-Token": f"{config.ARCEE_API_KEY}", "Content-Type": "application/json"}
     headers.update(**internal_headers)
-    url = f"{config.ARCEE_API_URL}/{config.ARCEE_API_VERSION}/{route}"
+    arcee_api_url = config.ARCEE_API_URL.rstrip("/")
+    url = f"{arcee_api_url}/{config.ARCEE_API_VERSION}/{route}"
 
     req_type = getattr(requests, request)
     response = req_type(url, json=body, params=params, headers=headers)
