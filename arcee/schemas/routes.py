@@ -13,3 +13,4 @@ class Route(StrEnum):
     pretraining = "pretraining"
     alignment = "alignment"
     deployment = "deployment"
+    merging = "merging"
