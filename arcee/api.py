@@ -146,9 +146,10 @@ def get_retriever_status(id_or_name: str) -> Dict[str, str]:
     """Gets the status of a retriever training job"""
     return check_model_status(id_or_name)
 
-def start_deployment(deployment_name: str, alignment: Optional[str] = None, retriever: Optional[str] = None):
-    data = {"deployment_name": deployment_name, "alignment_name": alignment, "retriever_name": retriever}
+def start_deployment(deployment_name: str, alignment: Optional[str] = None, retriever: Optional[str] = None, target_instance: Optional[str] = None, openai_compatability: Optional[bool] = False):
+    data = {"deployment_name": deployment_name, "alignment_name": alignment, "retriever_name": retriever, "target_instance": target_instance, "openai_compatability": openai_compatability}
     return make_request("post", Route.deployment+"/startDeployment", data)
+
 
 def stop_deployment(deployment_name: str):
     data = {"deployment_name": deployment_name}
