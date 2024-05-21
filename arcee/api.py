@@ -5,6 +5,7 @@ from arcee.api_handler import make_request
 from arcee.dalm import DALM, check_model_status
 from arcee.schemas.routes import Route
 
+
 def upload_corpus_folder(corpus: str, s3_folder_url: str) -> Dict[str, str]:
     """
     Upload a corpus file to a context
@@ -19,7 +20,8 @@ def upload_corpus_folder(corpus: str, s3_folder_url: str) -> Dict[str, str]:
 
     data = {"corpus_name": corpus, "s3_folder_url": s3_folder_url}
 
-    return make_request("post", Route.pretraining+"/corpusUpload", data)
+    return make_request("post", Route.pretraining + "/corpusUpload", data)
+
 
 def upload_qa_pairs(qa_set: str, qa_pairs: List[Dict[str, str]]) -> Dict[str, str]:
     """
@@ -33,7 +35,7 @@ def upload_qa_pairs(qa_set: str, qa_pairs: List[Dict[str, str]]) -> Dict[str, st
         Dict[str, str]: The response from the make_request call.
     """
     if len(qa_pairs) > 2000:
-        raise Exception("You can only upload 2000 QA pairs at a time")  
+        raise Exception("You can only upload 2000 QA pairs at a time")
 
     qa_list = []
     for qa in qa_pairs:
@@ -43,7 +45,8 @@ def upload_qa_pairs(qa_set: str, qa_pairs: List[Dict[str, str]]) -> Dict[str, st
         qa_list.append({"question": qa["question"], "answer": qa["answer"]})
 
     data = {"qa_set_name": qa_set, "qa_pairs": qa_list}
-    return make_request("post", Route.alignment+"/qaUpload", data)
+    return make_request("post", Route.alignment + "/qaUpload", data)
+
 
 def upload_docs(context: str, docs: List[Dict[str, str]]) -> Dict[str, str]:
     """
@@ -70,6 +73,7 @@ def upload_docs(context: str, docs: List[Dict[str, str]]) -> Dict[str, str]:
     data = {"context_name": context, "documents": doc_list}
     return make_request("post", Route.contexts, data)
 
+
 def start_pretraining(pretraining_name: str, corpus: str, base_model: str) -> None:
     """
     Start pretraining a model
@@ -82,26 +86,51 @@ def start_pretraining(pretraining_name: str, corpus: str, base_model: str) -> No
 
     data = {"pretraining_name": pretraining_name, "corpus_name": corpus, "base_model": base_model}
 
-    return make_request("post", Route.pretraining+"/startTraining", data)
+    return make_request("post", Route.pretraining + "/startTraining", data)
 
-def start_merging(merging_name: str, arcee_models: Optional[List[str]] = None, hf_models: Optional[List[str]] = None, qa_set_ids: Optional[List[str]] = None, general_evals: Optional[List[str]] = None, base_model: Optional[str] = None, merge_method: Optional[str] = None, time_budget: int = 1) -> None:
+def start_merging(
+    merging_name: str,
+    arcee_aligned_models: Optional[List[str]],
+    arcee_merged_models: Optional[List[str]],
+    arcee_pretrained_models: Optional[List[str]] = None,
+    hf_models: Optional[List[str]] = None,
+    arcee_eval_qa_set_names: Optional[List[str]] = None,
+    general_evals: Optional[List[str]] = None,
+    base_model: Optional[str] = None,
+    merge_method: Optional[str] = None,
+    time_budget_secs: int = 1,
+) -> None:
     """
     Start merging models
 
     Args:
         merging_name (str): The name of the merging job
-        arcee_models (list): A list of ARCEE models to merge
+        arcee_aligned_models (list): A list of ARCEE models to merge
+        arcee_merged_models (list): A list of ARCEE models already merged
+        arcee_pretrained_models (list): A list of pretrained ARCEE models
         hf_models (list): A list of Hugging Face models to merge
-        qa_set_ids (list): A list of QA sets to merge
+        eval_qa_set_names (list): A list of QA set names to merge
         general_evals (list): A list of general evaluations to merge
         base_model (str): The name of the base model to use
         merge_method (str): The merging method to use
-        time_budget (int): The time budget for the merging job (hourss)
+        time_budget_secs (int): The time budget for the merging job (seconds)
     """
 
-    data = {"name": merging_name, "arcee_models": arcee_models, "hf_models": hf_models, "qa_set_ids": qa_set_ids, "general_evals": general_evals, "base_model": base_model, "merge_method": merge_method, "time_budget": time_budget}
+    data = {
+        "merging_name": merging_name,
+        "arcee_aligned_models": arcee_aligned_models,
+        "arcee_merged_models": arcee_merged_models,
+        "arcee_pretrained_models": arcee_pretrained_models,
+        "hf_models": hf_models,
+        "arcee_eval_qa_set_names": arcee_eval_qa_set_names,
+        "general_evals": general_evals,
+        "base_model": base_model,
+        "merge_method": merge_method,
+        "time_budget_secs": time_budget_secs,
+    }
 
-    return make_request("post", Route.merging+"/startMerging", data)
+    return make_request("post", Route.merging + "/startMerging", data)
+
 
 def delete_corpus(corpus: str) -> None:
     """
@@ -113,7 +142,8 @@ def delete_corpus(corpus: str) -> None:
 
     data = {"corpus_name": corpus}
 
-    return make_request("post", Route.pretraining+"/deleteCorpus", data)
+    return make_request("post", Route.pretraining + "/deleteCorpus", data)
+
 
 def start_alignment(alignment_name: str, qa_set: str, pretrained_model: str) -> None:
     """
@@ -127,11 +157,18 @@ def start_alignment(alignment_name: str, qa_set: str, pretrained_model: str) -> 
 
     data = {"alignment_name": alignment_name, "qa_set_name": qa_set, "pretrained_model": pretrained_model}
 
-    return make_request("post", Route.alignment+"/startAlignment", data)
+    return make_request("post", Route.alignment + "/startAlignment", data)
+
 
 def upload_alignment(alignment_name: str, alignment_id: str, qa_set_id: str, pretraining_id: str) -> None:
-    data = {"alignment_name": alignment_name, "alignment_id": alignment_id, "qa_set_id": qa_set_id, "pretraining_id": pretraining_id}
-    return make_request("post", Route.alignment+"/uploadAlignment", data)
+    data = {
+        "alignment_name": alignment_name,
+        "alignment_id": alignment_id,
+        "qa_set_id": qa_set_id,
+        "pretraining_id": pretraining_id,
+    }
+    return make_request("post", Route.alignment + "/uploadAlignment", data)
+
 
 def start_retriever_training(name: str, context: str):
     data = {"name": name, "context": context}
@@ -142,30 +179,48 @@ def start_retriever_training(name: str, context: str):
         f'Retriever model training started - view model status at {status_url} or with arcee.get_retriever_status("{name}")'
     )
 
+
 def get_retriever_status(id_or_name: str) -> Dict[str, str]:
     """Gets the status of a retriever training job"""
     return check_model_status(id_or_name)
 
-def start_deployment(deployment_name: str, alignment: Optional[str] = None, retriever: Optional[str] = None, target_instance: Optional[str] = None, openai_compatability: Optional[bool] = False):
-    data = {"deployment_name": deployment_name, "alignment_name": alignment, "retriever_name": retriever, "target_instance": target_instance, "openai_compatability": openai_compatability}
-    return make_request("post", Route.deployment+"/startDeployment", data)
+
+def start_deployment(
+    deployment_name: str,
+    alignment: Optional[str] = None,
+    retriever: Optional[str] = None,
+    target_instance: Optional[str] = None,
+    openai_compatability: Optional[bool] = False,
+):
+    data = {
+        "deployment_name": deployment_name,
+        "alignment_name": alignment,
+        "retriever_name": retriever,
+        "target_instance": target_instance,
+        "openai_compatability": openai_compatability,
+    }
+    return make_request("post", Route.deployment + "/startDeployment", data)
 
 
 def stop_deployment(deployment_name: str):
     data = {"deployment_name": deployment_name}
-    return make_request("post", Route.deployment+"/stopDeployment", data)
+    return make_request("post", Route.deployment + "/stopDeployment", data)
+
 
 def generate(deployment_name: str, query: str):
     data = {"deployment_name": deployment_name, "query": query}
-    return make_request("post", Route.deployment+"/generate", data)
+    return make_request("post", Route.deployment + "/generate", data)
+
 
 def retrieve(deployment_name: str, query: str, size: Optional[int] = 5):
     data = {"deployment_name": deployment_name, "query": query, "size": size}
-    return make_request("post", Route.deployment+"/retrieve", data)
+    return make_request("post", Route.deployment + "/retrieve", data)
+
 
 def embed(deployment_name: str, query: str):
     data = {"deployment_name": deployment_name, "query": query}
-    return make_request("post", Route.deployment+"/embed", data)
+    return make_request("post", Route.deployment + "/embed", data)
+
 
 def get_current_org() -> str:
     return make_request("get", Route.identity)["org"]
