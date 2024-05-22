@@ -127,12 +127,13 @@ def start_pretraining(pretraining_name: str, corpus: str, base_model: str) -> No
 
 def start_merging(
     merging_name: str,
-    arcee_aligned_models: Optional[List[str]],
-    arcee_merged_models: Optional[List[str]],
+    wandb_key: str = None,
+    arcee_aligned_models: Optional[List[str]] = None,
+    arcee_merged_models: Optional[List[str]] = None,
     arcee_pretrained_models: Optional[List[str]] = None,
     hf_models: Optional[List[str]] = None,
-    arcee_eval_qa_set_names: Optional[List[str]] = None,
-    general_evals: Optional[List[str]] = None,
+    arcee_eval_qa_set_names_and_weights: Optional[List[dict]] = None,
+    general_evals_and_weights: Optional[List[dict]] = None,
     base_model: Optional[str] = None,
     merge_method: Optional[str] = None,
     time_budget_secs: int = 1,
@@ -146,21 +147,22 @@ def start_merging(
         arcee_merged_models (list): A list of ARCEE models already merged
         arcee_pretrained_models (list): A list of pretrained ARCEE models
         hf_models (list): A list of Hugging Face models to merge
-        eval_qa_set_names (list): A list of QA set names to merge
-        general_evals (list): A list of general evaluations to merge
+        eval_qa_set_names_and_weights (list): A list of QA set names to merge
+        general_evals_and_weights (list): A list of general evaluations to merge
         base_model (str): The name of the base model to use
         merge_method (str): The merging method to use
         time_budget_secs (int): The time budget for the merging job (seconds)
     """
-
+    
     data = {
         "merging_name": merging_name,
+        "wandb_key": wandb_key,
         "arcee_aligned_models": arcee_aligned_models,
         "arcee_merged_models": arcee_merged_models,
         "arcee_pretrained_models": arcee_pretrained_models,
         "hf_models": hf_models,
-        "arcee_eval_qa_set_names": arcee_eval_qa_set_names,
-        "general_evals": general_evals,
+        "arcee_eval_qa_set_names_and_weights": arcee_eval_qa_set_names_and_weights,
+        "general_evals_and_weights": general_evals_and_weights,
         "base_model": base_model,
         "merge_method": merge_method,
         "time_budget_secs": time_budget_secs,
