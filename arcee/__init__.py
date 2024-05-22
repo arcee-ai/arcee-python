@@ -18,6 +18,7 @@ from arcee.api import (
     delete_corpus,
     upload_alignment,
     start_merging,
+    upload_instructions_from_csv
 )
 from arcee.dalm import DALM, DALMFilter
 
@@ -45,4 +46,5 @@ __all__ = [
     "delete_corpus",
     "upload_alignment",
     "start_merging",
+    "upload_instructions_from_csv"
 ]

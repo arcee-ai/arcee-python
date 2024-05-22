@@ -4,6 +4,7 @@ from arcee import config
 from arcee.api_handler import make_request
 from arcee.dalm import DALM, check_model_status
 from arcee.schemas.routes import Route
+import csv
 
 
 def upload_corpus_folder(corpus: str, s3_folder_url: str) -> Dict[str, str]:
@@ -22,8 +23,7 @@ def upload_corpus_folder(corpus: str, s3_folder_url: str) -> Dict[str, str]:
 
     return make_request("post", Route.pretraining + "/corpusUpload", data)
 
-
-def upload_qa_pairs(qa_set: str, qa_pairs: List[Dict[str, str]]) -> Dict[str, str]:
+def upload_qa_pairs(qa_set: str, qa_pairs: List[Dict[str, str]], prompt_column: str = "prompt", completion_column: str = "completion") -> Dict[str, str]:
     """
     Upload a list of QA pairs to a specific QA set.
 
@@ -39,13 +39,50 @@ def upload_qa_pairs(qa_set: str, qa_pairs: List[Dict[str, str]]) -> Dict[str, st
 
     qa_list = []
     for qa in qa_pairs:
-        if "question" not in qa or "answer" not in qa:
+        if prompt_column not in qa.keys() or completion_column not in qa.keys():
             raise Exception("Each QA pair must have a 'question' and an 'answer' key")
 
-        qa_list.append({"question": qa["question"], "answer": qa["answer"]})
+        qa_list.append({"question": qa[prompt_column], "answer": qa[completion_column]})
 
     data = {"qa_set_name": qa_set, "qa_pairs": qa_list}
     return make_request("post", Route.alignment + "/qaUpload", data)
+
+def chunk_list(lst, chunk_size):
+    """Yield successive n-sized chunks from lst."""
+    for i in range(0, len(lst), chunk_size):
+        yield lst[i:i + chunk_size]
+
+def upload_instructions_from_csv(qa_set: str, csv_path: str, prompt_column: str = "prompt", completion_column: str = "completion", batch_size: int = 200) -> None:
+    """
+    Upload QA pairs from a CSV file to a specific QA set.
+
+    Args:
+        qa_set (str): The name of the QA set to upload to.
+        csv_path (str): The path to the CSV file containing QA pairs.
+
+    Returns:
+        Dict[str, str]: The response from the make_request call.
+    """
+    qa_pairs = []
+
+    print(f"Reading QA pairs from {csv_path}...")
+    with open(csv_path, 'r', encoding='utf-8') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            if prompt_column not in row.keys() or completion_column not in row.keys():
+                #raise Exception(f"Each row must have a '{question_column}' and an '{answer_column}' key. You can override the column names using the question_column and answer_column arguments.")
+                raise Exception(f"Each row must have a '{prompt_column}' and an '{completion_column}' key. You can override the column names using the prompt_column and completion_column arguments.")
+            qa_pairs.append({
+                f"{prompt_column}": row[prompt_column],
+                f"{completion_column}": row[completion_column]
+            })
+
+    print(f"Total QA pairs read: {len(qa_pairs)}")
+    # Split the QA pairs into chunks and upload each chunk separately
+    for i, chunk in enumerate(chunk_list(qa_pairs, batch_size)):
+        print(f"Uploading chunk {i + 1} of {len(qa_pairs) // batch_size + 1}...")
+        
+        upload_qa_pairs(qa_set=qa_set, qa_pairs=chunk, prompt_column=prompt_column, completion_column=completion_column)
 
 
 def upload_docs(context: str, docs: List[Dict[str, str]]) -> Dict[str, str]:
