@@ -136,6 +136,8 @@ def start_merging(
     general_evals_and_weights: Optional[List[dict]] = None,
     base_model: Optional[str] = None,
     merge_method: Optional[str] = None,
+    instance_type str = None,
+    capacity_id: str = None,
     time_budget_secs: int = 1,
 ) -> None:
     """
@@ -165,6 +167,8 @@ def start_merging(
         "general_evals_and_weights": general_evals_and_weights,
         "base_model": base_model,
         "merge_method": merge_method,
+        "instance_type": instance_type,
+        "capacity_id": capacity_id,
         "time_budget_secs": time_budget_secs,
     }
 
