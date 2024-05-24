@@ -23,66 +23,105 @@ def upload_corpus_folder(corpus: str, s3_folder_url: str) -> Dict[str, str]:
 
     return make_request("post", Route.pretraining + "/corpusUpload", data)
 
-def upload_qa_pairs(qa_set: str, qa_pairs: List[Dict[str, str]], prompt_column: str = "prompt", completion_column: str = "completion") -> Dict[str, str]:
-    """
-    Upload a list of QA pairs to a specific QA set.
-
-    Args:
-        qa_set (str): The name of the QA set to upload to.
-        qa_pairs (list): A list of dictionaries with keys "question" and "answer".
-
-    Returns:
-        Dict[str, str]: The response from the make_request call.
-    """
-    if len(qa_pairs) > 2000:
-        raise Exception("You can only upload 2000 QA pairs at a time")
-
-    qa_list = []
-    for qa in qa_pairs:
-        if prompt_column not in qa.keys() or completion_column not in qa.keys():
-            raise Exception("Each QA pair must have a 'question' and an 'answer' key")
-
-        qa_list.append({"question": qa[prompt_column], "answer": qa[completion_column]})
-
-    data = {"qa_set_name": qa_set, "qa_pairs": qa_list}
-    return make_request("post", Route.alignment + "/qaUpload", data)
+import os
+import csv
+import json
+import arcee
+from tqdm import tqdm
+from requests.exceptions import ConnectionError
+from datasets import load_dataset
+from typing import List, Dict
 
 def chunk_list(lst, chunk_size):
     """Yield successive n-sized chunks from lst."""
     for i in range(0, len(lst), chunk_size):
         yield lst[i:i + chunk_size]
 
-def upload_instructions_from_csv(qa_set: str, csv_path: str, prompt_column: str = "prompt", completion_column: str = "completion", batch_size: int = 200) -> None:
-    """
-    Upload QA pairs from a CSV file to a specific QA set.
+def upload_qa_pairs_with_retry(qa_set, qa_pairs, retries=3, delay=5):
+    """Upload QA pairs with retry logic."""
+    for attempt in range(retries):
+        try:
+            arcee.upload_qa_pairs(qa_set=qa_set, qa_pairs=qa_pairs)
+            return True
+        except ConnectionError as e:
+            if attempt < retries - 1:
+                time.sleep(delay)
+            else:
+                raise
+        except requests.HTTPError as e:
+            raise
 
-    Args:
-        qa_set (str): The name of the QA set to upload to.
-        csv_path (str): The path to the CSV file containing QA pairs.
+def load_data(source):
+    """Load data from CSV, JSON, or JSONL file."""
+    if source.endswith('.csv'):
+        with open(source, 'r', encoding='utf-8') as csvfile:
+            reader = csv.DictReader(csvfile)
+            return list(reader)
+    elif source.endswith('.json') or source.endswith('.jsonl'):
+        with open(source, 'r', encoding='utf-8') as jsonfile:
+            if source.endswith('.json'):
+                return json.load(jsonfile)
+            else:
+                return [json.loads(line) for line in jsonfile]
+    else:
+        raise ValueError("Unsupported file format")
 
-    Returns:
-        Dict[str, str]: The response from the make_request call.
-    """
-    qa_pairs = []
+def validate_and_standardize_columns(data):
+    """Validate dataset columns and standardize relevant data."""
+    required_columns_sets = [
+        {'prompt', 'messages'},
+        {'question', 'answer'},
+        {'prompt', 'completion'},
+        {'instruction', 'response'}
+    ]
 
-    print(f"Reading QA pairs from {csv_path}...")
-    with open(csv_path, 'r', encoding='utf-8') as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            if prompt_column not in row.keys() or completion_column not in row.keys():
-                #raise Exception(f"Each row must have a '{question_column}' and an '{answer_column}' key. You can override the column names using the question_column and answer_column arguments.")
-                raise Exception(f"Each row must have a '{prompt_column}' and an '{completion_column}' key. You can override the column names using the prompt_column and completion_column arguments.")
-            qa_pairs.append({
-                f"{prompt_column}": row[prompt_column],
-                f"{completion_column}": row[completion_column]
-            })
+    standardized_qa_pairs = []
 
-    print(f"Total QA pairs read: {len(qa_pairs)}")
-    # Split the QA pairs into chunks and upload each chunk separately
-    for i, chunk in enumerate(chunk_list(qa_pairs, batch_size)):
-        print(f"Uploading chunk {i + 1} of {len(qa_pairs) // batch_size + 1}...")
-        
-        upload_qa_pairs(qa_set=qa_set, qa_pairs=chunk, prompt_column=prompt_column, completion_column=completion_column)
+    for row in data:
+        for required_columns in required_columns_sets:
+            if required_columns.issubset(row.keys()):
+                # Standardize the columns to 'question' and 'answer'
+                standardized_row = {}
+                if 'prompt' in required_columns and ('completion' in required_columns or 'messages' in required_columns):
+                    standardized_row['question'] = row['prompt']
+                    standardized_row['answer'] = row.get('completion', row.get('messages', ''))
+                elif 'question' in required_columns and 'answer' in required_columns:
+                    standardized_row['question'] = row['question']
+                    standardized_row['answer'] = row['answer']
+                elif 'instruction' in required_columns and 'response' in required_columns:
+                    standardized_row['question'] = row['instruction']
+                    standardized_row['answer'] = row['response']
+
+                # Add 'split' if it exists
+                if 'split' in row:
+                    if row['split'] in {'train', 'evaluation'}:
+                        standardized_row['split'] = row['split']
+                    else:
+                        raise ValueError("The 'split' column must contain either 'train' or 'evaluation' as a value.")
+
+                standardized_qa_pairs.append(standardized_row)
+                break
+        else:
+            raise ValueError("Dataset does not contain the required columns.")
+    
+    return standardized_qa_pairs
+
+def upload_instructions_to_arcee(source, qa_set, batch_size=1980, hf_token=None):
+    # Determine the source type and read the QA pairs
+    if os.path.exists(source):
+        # Local CSV, JSON, or JSONL file path
+        data = load_data(source)
+    else:
+        # Assume it's a Hugging Face dataset identifier
+        dataset = load_dataset(source, token=hf_token)['train']
+        data = dataset.to_pandas().to_dict(orient='records')  # Convert to list of dicts
+
+    # Validate and standardize columns
+    qa_pairs = validate_and_standardize_columns(data)
+
+    # Upload dataset
+    for chunk in tqdm(chunk_list(qa_pairs, batch_size), total=len(qa_pairs)//batch_size + 1):
+        upload_qa_pairs_with_retry(qa_set=qa_set, qa_pairs=chunk)
 
 
 def upload_docs(context: str, docs: List[Dict[str, str]]) -> Dict[str, str]:
