@@ -5,6 +5,8 @@ from arcee.api_handler import make_request
 from arcee.dalm import DALM, check_model_status
 from arcee.schemas.routes import Route
 import csv
+import yaml
+import os
 
 
 def upload_corpus_folder(corpus: str, s3_folder_url: str) -> Dict[str, str]:
@@ -125,7 +127,35 @@ def start_pretraining(pretraining_name: str, corpus: str, base_model: str) -> No
 
     return make_request("post", Route.pretraining + "/startTraining", data)
 
-def start_merging(
+def mergekit_yaml(
+    merging_name: str,
+    merging_yaml_path: str
+) -> None:
+    """
+    Start merging models
+
+    Args:
+        merging_name (str): The name of the merging job
+        merging_yaml (str): The yaml file containing the merging instructions
+    """
+
+    if not merging_yaml_path.endswith(".yaml"):
+        raise Exception("The merging yaml file must be a .yaml file")
+
+    if not os.path.exists(merging_yaml_path):
+        raise Exception(f"The merging yaml file {merging_yaml_path} does not exist")
+
+    with open(merging_yaml_path, 'r') as file:
+        merging_yaml = yaml.safe_load(file)
+    
+        data = {
+            "merging_name": merging_name,
+            "best_merge_yaml": str(merging_yaml)
+        }
+
+        return make_request("post", Route.merging + "/startMerging", data)
+
+def mergekit_evolve(
     merging_name: str,
     wandb_key: str = None,
     arcee_aligned_models: Optional[List[str]] = None,
@@ -136,7 +166,7 @@ def start_merging(
     general_evals_and_weights: Optional[List[dict]] = None,
     base_model: Optional[str] = None,
     merge_method: Optional[str] = None,
-    instance_type str = None,
+    target_compute: str = None,
     capacity_id: str = None,
     time_budget_secs: int = 1,
 ) -> None:
@@ -167,7 +197,7 @@ def start_merging(
         "general_evals_and_weights": general_evals_and_weights,
         "base_model": base_model,
         "merge_method": merge_method,
-        "instance_type": instance_type,
+        "target_compute": target_compute,
         "capacity_id": capacity_id,
         "time_budget_secs": time_budget_secs,
     }

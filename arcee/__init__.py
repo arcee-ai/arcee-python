@@ -1,4 +1,4 @@
-__version__ = "1.0.9"
+__version__ = "1.1.1"
 
 import os
 
@@ -17,7 +17,8 @@ from arcee.api import (
     retrieve,
     delete_corpus,
     upload_alignment,
-    start_merging,
+    mergekit_evolve,
+    mergekit_yaml,
     upload_instructions_from_csv
 )
 from arcee.dalm import DALM, DALMFilter
@@ -45,6 +46,7 @@ __all__ = [
     "retrieve",
     "delete_corpus",
     "upload_alignment",
-    "start_merging",
+    "mergekit_evolve",
+    "mergekit_yaml",
     "upload_instructions_from_csv"
 ]
