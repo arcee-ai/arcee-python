@@ -4,6 +4,12 @@ from arcee import config
 from arcee.api_handler import make_request
 from arcee.dalm import DALM, check_model_status
 from arcee.schemas.routes import Route
+from arcee.api_helpers import _chat_ml_messages_to_qa_pair
+from datasets import load_dataset
+import pandas as pd
+import os
+import csv
+import json
 
 def upload_corpus_folder(corpus: str, s3_folder_url: str) -> Dict[str, str]:
     """
@@ -44,6 +50,60 @@ def upload_qa_pairs(qa_set: str, qa_pairs: List[Dict[str, str]]) -> Dict[str, st
 
     data = {"qa_set_name": qa_set, "qa_pairs": qa_list}
     return make_request("post", Route.alignment+"/qaUpload", data)
+
+
+def upload_hugging_face_dataset_qa_pairs(qa_set: str, hf_dataset_id: str, dataset_split: str, csv_format: str) -> Dict[str, str]:
+    """
+    Upload a list of QA pairs to a specific QA set.
+
+    Args:
+        qa_set (str): The name of the QA set to upload to.
+        hf_dataset_id (str): The HF dataset (eg, HuggingFaceH4/ultrachat_200k) that contains QA pairs in either a QA or ChatML format.
+        dataset_split (str): The dataset split, eg, "train", "train_sft", etc..
+
+    Returns:
+        Dict[str, str]: The response from the make_request call.
+    """
+
+
+    if csv_format == "qa":
+        raise Exception("csv_format 'qa' is not supported yet")
+
+    elif csv_format == "chatml":
+
+        qa_pairs = []
+
+        # Load dataset from HF
+        dataset = load_dataset(hf_dataset_id)
+        
+        # Convert the split to pandas
+        df = dataset[dataset_split].to_pandas()
+
+        # Loop over all the rows in df and convert the messages into QA pairs
+        for i, row in df.iterrows():
+            try:            
+                qa_pair_tuple = _chat_ml_messages_to_qa_pair(row["messages"])
+                qa_pair = {"question": qa_pair_tuple[0], "answer": qa_pair_tuple[1]}
+                qa_pairs.append(qa_pair)
+            except Exception as e:
+                print(f"Error on row {i}: {e}.  Skipping row")
+                continue
+
+        print(f"Uploading {len(qa_pairs)} QA pairs")
+
+        batch_size = 1000
+
+        # Upload in chunks of batch_size
+        for i in range(0, len(qa_pairs), batch_size):
+            chunk = qa_pairs[i:i+batch_size]
+            print(f"Uploading {batch_size} QA pairs..")
+            upload_qa_pairs(qa_set, chunk)
+            print(f"Uploaded {batch_size} QA pairs..")
+
+    else:
+        raise Exception("csv_format must be either 'qa' or 'chatml'")
+
+
 
 def upload_docs(context: str, docs: List[Dict[str, str]]) -> Dict[str, str]:
     """
