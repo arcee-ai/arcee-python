@@ -36,6 +36,9 @@ def _chat_ml_messages_to_qa_pair(messages: np.ndarray) -> (str, str):
 
     """
 
+    if len(messages) > 2:
+        raise Exception(f"Only single turn conversations are supported.  Found {len(messages)} messages, which indicates a multi-turn conversation.")
+
     # The first role should be a user role
     if messages[0]["role"] != "user":
         raise Exception("First message must be a user message")
