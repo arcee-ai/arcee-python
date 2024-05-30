@@ -136,7 +136,7 @@ def mergekit_yaml(
 
     Args:
         merging_name (str): The name of the merging job
-        merging_yaml (str): The yaml file containing the merging instructions
+        merging_yaml (str): The yaml file containing the merging instructions - https://github.com/arcee-ai/mergekit/tree/main/examples
     """
 
     if not merging_yaml_path.endswith(".yaml"):
