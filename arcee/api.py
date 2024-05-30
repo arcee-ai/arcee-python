@@ -163,7 +163,7 @@ def mergekit_evolve(
     arcee_pretrained_models: Optional[List[str]] = None,
     hf_models: Optional[List[str]] = None,
     arcee_eval_qa_set_names_and_weights: Optional[List[dict]] = None,
-    general_evals_and_weights: Optional[List[dict]] = None,
+    general_evals_and_weights: Optional[List[dict]] = [{"agieval_gaokao_physics": 1, "agieval_gaokao_english": 1, "agieval_logiqa_en": 1, "truthfulqa_gen": 1}],
     base_model: Optional[str] = None,
     merge_method: Optional[str] = None,
     target_compute: str = None,
