@@ -165,7 +165,7 @@ def mergekit_evolve(
     arcee_eval_qa_set_names_and_weights: Optional[List[dict]] = None,
     general_evals_and_weights: Optional[List[dict]] = [{"agieval_gaokao_physics": 1, "agieval_gaokao_english": 1, "agieval_logiqa_en": 1, "truthfulqa_gen": 1}],
     base_model: Optional[str] = None,
-    merge_method: Optional[str] = None,
+    merge_method: Optional[str] = "ties",
     target_compute: str = None,
     capacity_id: str = None,
     time_budget_secs: int = 1,
@@ -182,7 +182,7 @@ def mergekit_evolve(
         eval_qa_set_names_and_weights (list): A list of QA set names to merge
         general_evals_and_weights (list): A list of general evaluations to merge
         base_model (str): The name of the base model to use
-        merge_method (str): The merging method to use
+        merge_method (str): The merging method to use - https://github.com/arcee-ai/mergekit/blob/main/mergekit/merge_methods/__init__.py
         time_budget_secs (int): The time budget for the merging job (seconds)
     """
     
