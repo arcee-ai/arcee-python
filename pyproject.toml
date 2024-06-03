@@ -17,6 +17,7 @@ dependencies = [
     "requests",
     "typer",
     "rich",
+    "yaml",
     "pydantic>=2.4.2,<3.0",
     "StrEnum",
     "datasets"
