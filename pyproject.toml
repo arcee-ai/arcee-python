@@ -19,7 +19,8 @@ dependencies = [
     "rich",
     "yaml",
     "pydantic>=2.4.2,<3.0",
-    "StrEnum"
+    "StrEnum",
+    "datasets"
 ]
 
 [tool.hatch.build.targets.wheel]

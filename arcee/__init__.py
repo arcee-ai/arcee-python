@@ -19,7 +19,8 @@ from arcee.api import (
     upload_alignment,
     mergekit_evolve,
     mergekit_yaml,
-    upload_qa_pairs_from_csv
+    upload_qa_pairs_from_csv,
+    upload_hugging_face_dataset_qa_pairs
 )
 from arcee.dalm import DALM, DALMFilter
 
@@ -48,5 +49,6 @@ __all__ = [
     "upload_alignment",
     "mergekit_evolve",
     "mergekit_yaml",
-    "upload_qa_pairs_from_csv"
+    "upload_qa_pairs_from_csv",
+    "upload_hugging_face_dataset_qa_pairs"
 ]
