@@ -258,7 +258,7 @@ def mergekit_yaml(
             "best_merge_yaml": str(merging_yaml)
         }
 
-        return make_request("post", Route.merging + "/startMerging", data)
+        return make_request("post", Route.merging + "/start", data)
 
 def mergekit_evolve(
     merging_name: str,
@@ -292,7 +292,6 @@ def mergekit_evolve(
     
     data = {
         "merging_name": merging_name,
-        "wandb_key": wandb_key,
         "arcee_aligned_models": arcee_aligned_models,
         "arcee_merged_models": arcee_merged_models,
         "arcee_pretrained_models": arcee_pretrained_models,
@@ -306,7 +305,7 @@ def mergekit_evolve(
         "time_budget_secs": time_budget_secs,
     }
 
-    return make_request("post", Route.merging + "/startMerging", data)
+    return make_request("post", Route.merging + "/start", data)
 
 
 def delete_corpus(corpus: str) -> None:
