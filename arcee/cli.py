@@ -5,7 +5,7 @@ import typer
 from click import ClickException as ArceeException
 from typing_extensions import Annotated
 
-from arcee import DALM, train_dalm
+from arcee import DALM, train_dalm  # type: ignore
 from arcee.cli_handler import UploadHandler
 
 cli = typer.Typer()

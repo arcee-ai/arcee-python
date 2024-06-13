@@ -14,13 +14,13 @@ packages = [
      { include = "arcee" }
  ]
 dependencies = [
-    "requests",
-    "typer",
-    "rich",
-    "yaml",
+    "requests>=2.32.2,<3.0",
+    "typer>=0.12.3,<1.0",
+    "rich>=13.7.1,<14.0",
+    "pyyaml>=6.0.1,<7.0",
     "pydantic>=2.4.2,<3.0",
-    "StrEnum",
-    "datasets"
+    "StrEnum>=0.4.15,<1.0",
+    "datasets>=2.19.2,<3.0",
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -39,6 +39,7 @@ dev = [
     "pytest-cov",
     "pytest-env",
     "ruff",
+    "types-PyYAML",
     "types-requests",
     "pandas",
     "pandas-stubs"
@@ -58,9 +59,9 @@ target-version = "py311"
 respect-gitignore = true
 line-length = 120
 # Pyflakes, bugbear, pycodestyle, pycodestyle warnings, isort
-select=["TID252", "B", "F", "E", "W", "I001"]
+lint.select=["TID252", "B", "F", "E", "W", "I001"]
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 case-sensitive = true
 order-by-type = true
 known-first-party = ["dalm"]
@@ -83,7 +84,7 @@ env = [
 ]
 
 
-[tool.ruff.flake8-tidy-imports]
+[tool.ruff.lint.flake8-tidy-imports]
 # Disallow all relative imports.
 ban-relative-imports = "all"
 
@@ -93,4 +94,8 @@ plugins = "pydantic.mypy"
 
 [[tool.mypy.overrides]]
 module = "retrying.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "datasets.*"
 ignore_missing_imports = true
