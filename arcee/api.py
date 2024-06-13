@@ -373,11 +373,13 @@ type_to_weights_route = {
     "merging": Route.merging + "/{id_or_name}/weights",
 }
 
-def download_weights(type: Literal["pretraining", "alignment", "retriever", "merging"], id_or_name: str) -> Response:
+
+def download_weights(type: model_weight_types, id_or_name: str) -> Response:
     """
     Download the weights of a trained model on the Arcee platform.
 
-    type: The type of model to download weights for. Can be one of "pretraining", "alignment", "retriever", or "merging".
+    type: The type of model to download weights for.
+        Can be one of "pretraining", "alignment", "retriever", or "merging".
     id_or_name: The ID or name of the model to download weights for.
     """
     route = type_to_weights_route[type].format(id_or_name=id_or_name)

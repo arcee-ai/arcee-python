@@ -5,12 +5,6 @@ from typing import List, Optional
 import typer
 from click import ClickException as ArceeException
 from rich.console import Console
-from rich.progress import (
-    DownloadColumn,
-    Progress,
-    TimeElapsedColumn,
-    TransferSpeedColumn,
-)
 from rich.table import Table
 from typing_extensions import Annotated
 
@@ -259,12 +253,14 @@ def download_cpt_weights(
     ] = None,
 ) -> None:
     """Download CPT weights"""
-    WeightsDownloadHandler.handle_weights_download('pretraining', name, out)
+    WeightsDownloadHandler.handle_weights_download("pretraining", name, out)
+
 
 cli.add_typer(cpt, name="cpt")
 
 
 sft = typer.Typer(help="Manage SFT")
+
 
 @sft.command(name="download")
 def download_sft_weights(
@@ -278,7 +274,7 @@ def download_sft_weights(
     ] = None,
 ) -> None:
     """Download SFT weights"""
-    WeightsDownloadHandler.handle_weights_download('alignment', name, out)
+    WeightsDownloadHandler.handle_weights_download("alignment", name, out)
 
 
 cli.add_typer(sft, name="sft")
@@ -286,11 +282,14 @@ cli.add_typer(sft, name="sft")
 
 retriever = typer.Typer(help="Manage Retrievers")
 
+
 @retriever.command(name="download")
 def download_retriever_weights(
     name: Annotated[
         str,
-        typer.Option(help="Name of the retriever model to download weights for", prompt="Enter the name of the retriever model"),
+        typer.Option(
+            help="Name of the retriever model to download weights for", prompt="Enter the name of the retriever model"
+        ),
     ],
     out: Annotated[
         Optional[Path],
@@ -298,18 +297,21 @@ def download_retriever_weights(
     ] = None,
 ) -> None:
     """Download Retriever weights"""
-    WeightsDownloadHandler.handle_weights_download('retriever', name, out)
+    WeightsDownloadHandler.handle_weights_download("retriever", name, out)
 
 
 cli.add_typer(retriever, name="retriever")
 
 merging = typer.Typer(help="Manage Merging")
 
+
 @merging.command(name="download")
 def download_merging_weights(
     name: Annotated[
         str,
-        typer.Option(help="Name of the merging model to download weights for", prompt="Enter the name of the merging model"),
+        typer.Option(
+            help="Name of the merging model to download weights for", prompt="Enter the name of the merging model"
+        ),
     ],
     out: Annotated[
         Optional[Path],
@@ -317,10 +319,11 @@ def download_merging_weights(
     ] = None,
 ) -> None:
     """Download Merging weights"""
-    WeightsDownloadHandler.handle_weights_download('merging', name, out)
+    WeightsDownloadHandler.handle_weights_download("merging", name, out)
 
 
 cli.add_typer(merging, name="merging")
+
 
 @cli.command()
 def org() -> None:
