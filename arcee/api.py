@@ -1,12 +1,13 @@
 import csv
 import os
-from typing import Any, Dict, Generator, List, Optional, Union
+from typing import Any, Dict, Generator, List, Optional, Union, cast
 
 import yaml
 from datasets import load_dataset
+from requests import Response
 
 from arcee import config
-from arcee.api_handler import make_request
+from arcee.api_handler import make_request, nonjson_request
 from arcee.api_helpers import _chat_ml_messages_to_qa_pair
 from arcee.dalm import check_model_status
 from arcee.schemas.routes import Route
@@ -357,3 +358,11 @@ def embed(deployment_name: str, query: str) -> Dict[str, str]:
 
 def get_current_org() -> str:
     return make_request("get", Route.identity)["org"]
+
+
+def list_pretrainings() -> List[Dict[str, str]]:
+    return cast(List[Dict[str, str]], make_request("get", Route.pretraining + "/"))
+
+
+def download_pretraining_weights(id_or_name: str) -> Response:
+    return nonjson_request("get", Route.pretraining + f"/{id_or_name}/weights", stream=True)
