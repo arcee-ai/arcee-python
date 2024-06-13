@@ -16,7 +16,7 @@ from typing_extensions import Annotated
 
 import arcee.api
 from arcee import DALM
-from arcee.cli_handler import UploadHandler
+from arcee.cli_handler import UploadHandler, WeightsDownloadHandler
 
 console = Console()
 
@@ -259,36 +259,68 @@ def download_cpt_weights(
     ] = None,
 ) -> None:
     """Download CPT weights"""
-    try:
-        out = out or Path.cwd() / f"{name}.tar.gz"
-        console.print(f"Downloading CPT weights for {name} to {out}")
-
-        with open(out, "wb") as f:
-            with arcee.api.download_pretraining_weights(name) as response:
-                response.raise_for_status()
-                size = int(response.headers.get("Content-Length", 0))
-
-                with Progress(
-                    *Progress.get_default_columns(),
-                    DownloadColumn(),
-                    TimeElapsedColumn(),
-                    TransferSpeedColumn(),
-                    transient=True,
-                ) as progress:
-                    task = progress.add_task(f"[blue]Downloading {name} weights...", total=size if size > 0 else None)
-
-                    for chunk in response.iter_content(chunk_size=8192):
-                        f.write(chunk)
-                        progress.update(task, advance=len(chunk))
-
-                    console.print(f"Downloaded {out} in {progress.get_time()} seconds")
-    except Exception as e:
-        console.print_exception()
-        raise ArceeException(message=f"Error downloading CPT weights: {e}") from e
-
+    WeightsDownloadHandler.handle_weights_download('pretraining', name, out)
 
 cli.add_typer(cpt, name="cpt")
 
+
+sft = typer.Typer(help="Manage SFT")
+
+@sft.command(name="download")
+def download_sft_weights(
+    name: Annotated[
+        str,
+        typer.Option(help="Name of the SFT model to download weights for", prompt="Enter the name of the SFT model"),
+    ],
+    out: Annotated[
+        Optional[Path],
+        typer.Option(help="Path to download file to", file_okay=True, dir_okay=False, readable=True),
+    ] = None,
+) -> None:
+    """Download SFT weights"""
+    WeightsDownloadHandler.handle_weights_download('alignment', name, out)
+
+
+cli.add_typer(sft, name="sft")
+
+
+retriever = typer.Typer(help="Manage Retrievers")
+
+@retriever.command(name="download")
+def download_retriever_weights(
+    name: Annotated[
+        str,
+        typer.Option(help="Name of the retriever model to download weights for", prompt="Enter the name of the retriever model"),
+    ],
+    out: Annotated[
+        Optional[Path],
+        typer.Option(help="Path to download file to", file_okay=True, dir_okay=False, readable=True),
+    ] = None,
+) -> None:
+    """Download Retriever weights"""
+    WeightsDownloadHandler.handle_weights_download('retriever', name, out)
+
+
+cli.add_typer(retriever, name="retriever")
+
+merging = typer.Typer(help="Manage Merging")
+
+@merging.command(name="download")
+def download_merging_weights(
+    name: Annotated[
+        str,
+        typer.Option(help="Name of the merging model to download weights for", prompt="Enter the name of the merging model"),
+    ],
+    out: Annotated[
+        Optional[Path],
+        typer.Option(help="Path to download file to", file_okay=True, dir_okay=False, readable=True),
+    ] = None,
+) -> None:
+    """Download Merging weights"""
+    WeightsDownloadHandler.handle_weights_download('merging', name, out)
+
+
+cli.add_typer(merging, name="merging")
 
 @cli.command()
 def org() -> None:
