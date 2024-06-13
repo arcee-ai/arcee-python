@@ -14,13 +14,13 @@ packages = [
      { include = "arcee" }
  ]
 dependencies = [
-    "requests",
-    "typer",
-    "rich",
-    "yaml",
+    "requests>=2.32.2,<3.0",
+    "typer>=0.12.3,<1.0",
+    "rich>=13.7.1,<14.0",
+    "pyyaml>=6.0.1,<7.0",
     "pydantic>=2.4.2,<3.0",
-    "StrEnum",
-    "datasets"
+    "StrEnum>=0.4.15,<1.0",
+    "datasets>=2.19.2,<3.0",
 ]
 
 [tool.hatch.build.targets.wheel]
