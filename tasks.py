@@ -198,7 +198,7 @@ def _bump_version(version: str, bump: Optional[BumpType] = None) -> str:
     return str(v)
 
 
-@task(aliases=("uv",))
+@task(aliases=("version",))
 def update_version_number(ctx: Context, part: Optional[BumpType] = None) -> None:
     """update version number
 

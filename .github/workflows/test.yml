@@ -31,7 +31,7 @@ jobs:
           uv-venv: "arcee-ci"
 
       - name: install dependencies
-        run: uv pip install invoke && uv pip install --no-editable
+        run: uv pip install invoke && uv pip install .
 
       - name: Run inv lint
         run: inv lint
