@@ -90,7 +90,7 @@ def lint(ctx: Context) -> None:
         echo=True,
     )
     ctx.run(
-        f"ruff {SOURCES}",
+        f"ruff check {SOURCES}",
         pty=True,
         echo=True,
     )
@@ -108,7 +108,7 @@ def format(ctx: Context) -> None:
         echo=True,
     )
     ctx.run(
-        f"ruff {SOURCES} --fix",
+        f"ruff check {SOURCES} --fix",
         pty=True,
         echo=True,
     )
