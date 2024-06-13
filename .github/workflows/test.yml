@@ -27,6 +27,8 @@ jobs:
 
       - name: install uv
         uses: yezz123/setup-uv@v4
+        with:
+          uv-venv: "arcee-ci"
 
       - name: install dependencies
         run: uv pip install invoke && uv pip install --no-editable
