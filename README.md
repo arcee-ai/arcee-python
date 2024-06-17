@@ -25,11 +25,19 @@ import os
 os.environ["ARCEE_API_KEY"] = "********"
 ```
 
-To customize the URL of the arcee platform:
+(Optional) To customize the URL of the Arcee platform:
 
 ```
 export ARCEE_API_URL="https://your-url.arcee.ai"
 ```
+
+(Optional) To specify an organization to issue requests for:
+
+```
+export ARCEE_ORG="my-organization"
+```
+
+If you do not specify an organization, your default organization will be used. You can change the default in your Arcee account settings.
 
 ## Upload Context
 

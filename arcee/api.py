@@ -1,6 +1,6 @@
 import csv
 import os
-from typing import Any, Dict, Generator, List, Optional, Union, cast
+from typing import Any, Dict, Generator, List, Literal, Optional, Union, cast
 
 import yaml
 from datasets import load_dataset
@@ -364,5 +364,23 @@ def list_pretrainings() -> List[Dict[str, str]]:
     return cast(List[Dict[str, str]], make_request("get", Route.pretraining + "/"))
 
 
-def download_pretraining_weights(id_or_name: str) -> Response:
-    return nonjson_request("get", Route.pretraining + f"/{id_or_name}/weights", stream=True)
+model_weight_types = Literal["pretraining", "alignment", "retriever", "merging"]
+
+type_to_weights_route = {
+    "pretraining": Route.pretraining + "/{id_or_name}/weights",
+    "alignment": Route.alignment + "/{id_or_name}/weights",
+    "retriever": Route.retriever + "/{id_or_name}/weights",
+    "merging": Route.merging + "/{id_or_name}/weights",
+}
+
+
+def download_weights(type: model_weight_types, id_or_name: str) -> Response:
+    """
+    Download the weights of a trained model on the Arcee platform.
+
+    type: The type of model to download weights for.
+        Can be one of "pretraining", "alignment", "retriever", or "merging".
+    id_or_name: The ID or name of the model to download weights for.
+    """
+    route = type_to_weights_route[type].format(id_or_name=id_or_name)
+    return nonjson_request("get", route, stream=True)
