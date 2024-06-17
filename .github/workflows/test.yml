@@ -4,8 +4,6 @@ on:
   pull_request:
     branches:
       - main
-    paths:
-      - "arcee/**"
 
 jobs:
   test_lint:
@@ -18,20 +16,23 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          cache: pip
-          cache-dependency-path: "**/pyproject.toml"
+          # uv is not yet supported by this cache, its fast enough to not cache
+          # cache: pip
+          # cache-dependency-path: "**/pyproject.toml"
 
-      - name: install invoke
-        run: pip install invoke
+      - name: install uv
+        uses: yezz123/setup-uv@v4
+        with:
+          uv-venv: "arcee-ci"
 
       - name: install dependencies
-        run: inv install --no-editable
+        run: uv pip install invoke && uv pip install '.[dev]'
 
       - name: Run inv lint
         run: inv lint

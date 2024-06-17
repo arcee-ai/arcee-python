@@ -132,13 +132,13 @@ inv test    # pytest
 ```
 
 ## Publishing
-We publish in this repo by creating a new release/tag in github. On release, a github action will 
+We publish in this repo by creating a new release/tag in github. On release, a github action will
 publish the `__version__` of arcee-py that is in `arcee/__init__.py`
 
 **So you need to increase that version before releasing, otherwise it will fail**
 
 ### To create a new release
-1. Open a PR increasing the `__version__` of arcee-py. You can manually edit it or run `inv uv`
+1. Open a PR increasing the `__version__` of arcee-py. You can manually edit it or run `inv version`
 2. Create a new release, with the name being the `__version__` of arcee-py
 
 ### Manual release [not recommended]
