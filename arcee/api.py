@@ -278,7 +278,9 @@ def delete_corpus(corpus: str) -> Dict[str, str]:
     return make_request("post", Route.pretraining + "/deleteCorpus", data)
 
 
-def start_alignment(alignment_name: str, qa_set: str, pretrained_model: str, full_or_peft: Optional[str] = "full") -> Dict[str, str]:
+def start_alignment(
+    alignment_name: str, qa_set: str, pretrained_model: str, full_or_peft: Optional[str] = "full"
+) -> Dict[str, str]:
     """
     Start alignment of a model
 
@@ -288,7 +290,12 @@ def start_alignment(alignment_name: str, qa_set: str, pretrained_model: str, ful
         pretrained_model (str): The name of the pretrained model to use
     """
 
-    data = {"alignment_name": alignment_name, "qa_set_name": qa_set, "pretrained_model": pretrained_model, "full_or_peft": full_or_peft}
+    data = {
+        "alignment_name": alignment_name,
+        "qa_set_name": qa_set,
+        "pretrained_model": pretrained_model,
+        "full_or_peft": full_or_peft,
+    }
 
     return make_request("post", Route.alignment + "/startAlignment", data)
 
