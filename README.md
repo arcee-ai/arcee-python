@@ -63,6 +63,9 @@ arcee.upload_instructions_from_csv(
 
 ### Method 2: Via HF Dataset
 
+NOTE: you will need to set `HUGGINGFACE_TOKEN` in your environment to use this function.
+
+
 ```
 arcee.api.upload_hugging_face_dataset_qa_pairs(
     "my_qa_pairs", 
