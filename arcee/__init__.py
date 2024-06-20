@@ -1,4 +1,4 @@
-__version__ = "1.1.1"
+__version__ = "1.2.2"
 
 import os
 
@@ -20,7 +20,7 @@ from arcee.api import (
     mergekit_evolve,
     mergekit_yaml,
     upload_qa_pairs_from_csv,
-    upload_hugging_face_dataset_qa_pairs
+    upload_hugging_face_dataset_qa_pairs,
 )
 from arcee.dalm import DALM, DALMFilter
 
@@ -50,5 +50,5 @@ __all__ = [
     "mergekit_evolve",
     "mergekit_yaml",
     "upload_qa_pairs_from_csv",
-    "upload_hugging_face_dataset_qa_pairs"
+    "upload_hugging_face_dataset_qa_pairs",
 ]
