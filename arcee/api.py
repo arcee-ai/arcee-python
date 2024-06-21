@@ -284,7 +284,7 @@ def start_alignment(
     pretrained_model: Optional[str] = None,
     merging_model: Optional[str] = None,
     alignment_model: Optional[str] = None,
-) -> None:
+) -> Dict[str, str]:
     """
     Start the alignment of a model. This function submits a request to begin the alignment process using the specified models.
 
@@ -342,7 +342,7 @@ def start_deployment(
     retriever: Optional[str] = None,
     target_instance: Optional[str] = None,
     openai_compatability: Optional[bool] = False,
-):
+) -> Dict[str, str]:
     data = {
         "deployment_name": deployment_name,
         "alignment_name": alignment,
