@@ -336,19 +336,22 @@ def get_retriever_status(id_or_name: str) -> Dict[str, str]:
 def start_deployment(
     deployment_name: str,
     alignment: Optional[str] = None,
+    merging: Optional[str] = None,
+    pretraining: Optional[str] = None,
     retriever: Optional[str] = None,
     target_instance: Optional[str] = None,
     openai_compatability: Optional[bool] = False,
-) -> Dict[str, str]:
+):
     data = {
         "deployment_name": deployment_name,
         "alignment_name": alignment,
+        "merging_name": merging,
+        "pretraining_name": pretraining,
         "retriever_name": retriever,
         "target_instance": target_instance,
         "openai_compatability": openai_compatability,
     }
     return make_request("post", Route.deployment + "/startDeployment", data)
-
 
 def stop_deployment(deployment_name: str) -> Dict[str, str]:
     data = {"deployment_name": deployment_name}
