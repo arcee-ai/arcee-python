@@ -286,7 +286,10 @@ def start_alignment(
     alignment_model: Optional[str] = None,
 ) -> Dict[str, str]:
     """
-    Start the alignment of a model. This function submits a request to begin the alignment process using the specified models.
+    Start the alignment of a model.
+    This function submits a request to
+    begin the alignment process using
+    the specified models.
 
     Args:
         alignment_name (str): The name of the alignment job.
