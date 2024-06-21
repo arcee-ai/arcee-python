@@ -40,3 +40,4 @@ ARCEE_API_URL = get_conditional_configuration_variable("ARCEE_API_URL", "https:/
 ARCEE_APP_URL = get_conditional_configuration_variable("ARCEE_APP_URL", "https://app.arcee.ai")
 ARCEE_API_KEY = get_conditional_configuration_variable("ARCEE_API_KEY", "")
 ARCEE_API_VERSION = get_conditional_configuration_variable("ARCEE_API_VERSION", "v2")
+ARCEE_ORG = get_conditional_configuration_variable("ARCEE_ORG", "")

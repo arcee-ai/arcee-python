@@ -90,7 +90,7 @@ def lint(ctx: Context) -> None:
         echo=True,
     )
     ctx.run(
-        f"ruff {SOURCES}",
+        f"ruff check {SOURCES}",
         pty=True,
         echo=True,
     )
@@ -108,7 +108,7 @@ def format(ctx: Context) -> None:
         echo=True,
     )
     ctx.run(
-        f"ruff {SOURCES} --fix",
+        f"ruff check {SOURCES} --fix",
         pty=True,
         echo=True,
     )
@@ -198,7 +198,7 @@ def _bump_version(version: str, bump: Optional[BumpType] = None) -> str:
     return str(v)
 
 
-@task(aliases=("uv",))
+@task(aliases=("version",))
 def update_version_number(ctx: Context, part: Optional[BumpType] = None) -> None:
     """update version number
 

@@ -1,26 +1,26 @@
-__version__ = "1.1.1"
+__version__ = "1.2.1"
 
 import os
 
 from arcee import config
 from arcee.api import (
-    upload_docs,
-    upload_corpus_folder,
-    upload_qa_pairs,
-    start_alignment,
-    start_pretraining,
-    start_retriever_training,
-    get_retriever_status,
-    start_deployment,
-    stop_deployment,
-    generate,
-    retrieve,
     delete_corpus,
-    upload_alignment,
+    generate,
+    get_retriever_status,
     mergekit_evolve,
     mergekit_yaml,
+    retrieve,
+    start_alignment,
+    start_deployment,
+    start_pretraining,
+    start_retriever_training,
+    stop_deployment,
+    upload_alignment,
+    upload_corpus_folder,
+    upload_docs,
+    upload_hugging_face_dataset_qa_pairs,
+    upload_qa_pairs,
     upload_qa_pairs_from_csv,
-    upload_hugging_face_dataset_qa_pairs
 )
 from arcee.dalm import DALM, DALMFilter
 
@@ -50,5 +50,5 @@ __all__ = [
     "mergekit_evolve",
     "mergekit_yaml",
     "upload_qa_pairs_from_csv",
-    "upload_hugging_face_dataset_qa_pairs"
+    "upload_hugging_face_dataset_qa_pairs",
 ]

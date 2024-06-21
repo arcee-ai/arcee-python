@@ -1,41 +1,48 @@
+from itertools import groupby
 from pathlib import Path
 from typing import List, Optional
 
 import typer
 from click import ClickException as ArceeException
+from rich.console import Console
+from rich.table import Table
 from typing_extensions import Annotated
 
-from arcee import DALM, train_dalm
-from arcee.cli_handler import UploadHandler
+import arcee.api
+from arcee import DALM
+from arcee.cli_handler import UploadHandler, WeightsDownloadHandler
+
+console = Console()
 
 cli = typer.Typer()
 """Arcee CLI"""
 
 
-@cli.command()
-def train(
-    name: Annotated[str, typer.Argument(help="Name of the model")],
-    context: Annotated[Optional[str], typer.Option(help="Name of the context")] = None,
-    instructions: Annotated[Optional[str], typer.Option(help="Instructions for the model")] = None,
-    generator: Annotated[str, typer.Option(help="Generator type")] = "Command",
-) -> None:
-    # name: str, context: Optional[str] = None, instructions: Optional[str] = None, generator: str = "Command"
-    """Train a model
+# FIXME: train_dalm seems to no longer exist...
+# @cli.command()
+# def train(
+#     name: Annotated[str, typer.Argument(help="Name of the model")],
+#     context: Annotated[Optional[str], typer.Option(help="Name of the context")] = None,
+#     instructions: Annotated[Optional[str], typer.Option(help="Instructions for the model")] = None,
+#     generator: Annotated[str, typer.Option(help="Generator type")] = "Command",
+# ) -> None:
+#     # name: str, context: Optional[str] = None, instructions: Optional[str] = None, generator: str = "Command"
+#     """Train a model
 
-    Args:
-        name (str): Name of the model
-        context (str): Name of the context
-        instructions (str): Instructions for the model
-        generator (str): Generator type. Defaults to "Command".
-    """
+#     Args:
+#         name (str): Name of the model
+#         context (str): Name of the context
+#         instructions (str): Instructions for the model
+#         generator (str): Generator type. Defaults to "Command".
+#     """
 
-    try:
-        train_dalm(name, context, instructions, generator)
-        typer.secho(f"✅ Model {name} set for training.")
-    except Exception as e:
-        raise ArceeException(
-            message=f"Error training model: {e}",
-        ) from e
+#     try:
+#         train_dalm(name, context, instructions, generator)
+#         typer.secho(f"✅ Model {name} set for training.")
+#     except Exception as e:
+#         raise ArceeException(
+#             message=f"Error training model: {e}",
+#         ) from e
 
 
 @cli.command()
@@ -189,6 +196,145 @@ def vocabulary(
 
 
 cli.add_typer(upload, name="upload")
+
+
+cpt = typer.Typer(help="Manage CPT")
+
+
+@cpt.command(name="list")
+def list_cpts() -> None:
+    """List all CPTs"""
+    try:
+        result = arcee.api.list_pretrainings()
+
+        table = Table("Name", "Status", "Base Generator", "Last Updated", title="List CPTs")
+
+        key_func = lambda x: x["processing_state"]  # noqa: E731
+        grouped_data = {key: list(group) for key, group in groupby(result, key_func)}
+
+        captions = []
+
+        for key, group in grouped_data.items():
+            if key == "failed":
+                captions.append(typer.style(f"Failed: {len(group)}", fg="red"))
+            elif key == "completed":
+                captions.append(typer.style(f"Completed: {len(group)}", fg="green"))
+            elif key == "processing":
+                captions.append(typer.style(f"Processing: {len(group)}", fg="yellow"))
+            elif key == "pending":
+                captions.append(typer.style(f"Pending: {len(group)}", fg="blue"))
+
+            table.add_section()
+
+            for cpt in list(group):
+                table.add_row(
+                    cpt["name"],
+                    cpt["status"],
+                    cpt["base_generator"],
+                    cpt.get("updated_at") or cpt.get("created_at", "-"),
+                )
+
+        if len(captions) > 0:
+            table.caption = " | ".join(captions)
+        console.print(table)
+    except Exception as e:
+        raise ArceeException(message=f"Error listing CPTs: {e}") from e
+
+
+@cpt.command(name="download")
+def download_cpt_weights(
+    name: Annotated[
+        str,
+        typer.Option(help="Name of the CPT model to download weights for", prompt="Enter the name of the CPT model"),
+    ],
+    out: Annotated[
+        Optional[Path],
+        typer.Option(help="Path to download file to", file_okay=True, dir_okay=False, readable=True),
+    ] = None,
+) -> None:
+    """Download CPT weights"""
+    WeightsDownloadHandler.handle_weights_download("pretraining", name, out)
+
+
+cli.add_typer(cpt, name="cpt")
+
+
+sft = typer.Typer(help="Manage SFT")
+
+
+@sft.command(name="download")
+def download_sft_weights(
+    name: Annotated[
+        str,
+        typer.Option(help="Name of the SFT model to download weights for", prompt="Enter the name of the SFT model"),
+    ],
+    out: Annotated[
+        Optional[Path],
+        typer.Option(help="Path to download file to", file_okay=True, dir_okay=False, readable=True),
+    ] = None,
+) -> None:
+    """Download SFT weights"""
+    WeightsDownloadHandler.handle_weights_download("alignment", name, out)
+
+
+cli.add_typer(sft, name="sft")
+
+
+retriever = typer.Typer(help="Manage Retrievers")
+
+
+@retriever.command(name="download")
+def download_retriever_weights(
+    name: Annotated[
+        str,
+        typer.Option(
+            help="Name of the retriever model to download weights for", prompt="Enter the name of the retriever model"
+        ),
+    ],
+    out: Annotated[
+        Optional[Path],
+        typer.Option(help="Path to download file to", file_okay=True, dir_okay=False, readable=True),
+    ] = None,
+) -> None:
+    """Download Retriever weights"""
+    WeightsDownloadHandler.handle_weights_download("retriever", name, out)
+
+
+cli.add_typer(retriever, name="retriever")
+
+merging = typer.Typer(help="Manage Merging")
+
+
+@merging.command(name="download")
+def download_merging_weights(
+    name: Annotated[
+        str,
+        typer.Option(
+            help="Name of the merging model to download weights for", prompt="Enter the name of the merging model"
+        ),
+    ],
+    out: Annotated[
+        Optional[Path],
+        typer.Option(help="Path to download file to", file_okay=True, dir_okay=False, readable=True),
+    ] = None,
+) -> None:
+    """Download Merging weights"""
+    WeightsDownloadHandler.handle_weights_download("merging", name, out)
+
+
+cli.add_typer(merging, name="merging")
+
+
+@cli.command()
+def org() -> None:
+    """Prints the current org"""
+    try:
+        result = arcee.api.get_current_org()
+        console.print(f"Current org: {result}")
+    except Exception as e:
+        console.print_exception()
+        raise ArceeException(message=f"Error getting current org: {e}") from e
+
 
 if __name__ == "__main__":
     cli()

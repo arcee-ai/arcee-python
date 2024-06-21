@@ -14,3 +14,4 @@ class Route(StrEnum):
     alignment = "alignment"
     deployment = "deployment"
     merging = "merging"
+    retriever = "models"
