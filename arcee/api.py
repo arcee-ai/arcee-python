@@ -277,12 +277,13 @@ def delete_corpus(corpus: str) -> Dict[str, str]:
 
     return make_request("post", Route.pretraining + "/deleteCorpus", data)
 
+
 def start_alignment(
     alignment_name: str,
     qa_set: str,
     pretrained_model: Optional[str] = None,
     merging_model: Optional[str] = None,
-    alignment_model: Optional[str] = None
+    alignment_model: Optional[str] = None,
 ) -> None:
     """
     Start the alignment of a model. This function submits a request to begin the alignment process using the specified models.
@@ -352,6 +353,7 @@ def start_deployment(
         "openai_compatability": openai_compatability,
     }
     return make_request("post", Route.deployment + "/startDeployment", data)
+
 
 def stop_deployment(deployment_name: str) -> Dict[str, str]:
     data = {"deployment_name": deployment_name}
