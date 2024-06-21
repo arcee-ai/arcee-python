@@ -287,24 +287,35 @@ def delete_corpus(corpus: str) -> Dict[str, str]:
 
 
 def start_alignment(
-    alignment_name: str, qa_set: str, pretrained_model: str, full_or_peft: Optional[str] = "full"
+    alignment_name: str,
+    qa_set: str,
+    pretrained_model: Optional[str] = None,
+    merging_model: Optional[str] = None,
+    alignment_model: Optional[str] = None,
 ) -> Dict[str, str]:
     """
-    Start alignment of a model
+    Start the alignment of a model.
+    This function submits a request to
+    begin the alignment process using
+    the specified models.
 
     Args:
-        alignment_name (str): The name of the alignment job
-        qa_set (str): The name of the QA set to use
-        pretrained_model (str): The name of the pretrained model to use
+        alignment_name (str): The name of the alignment job.
+        qa_set (str): The name of the QA set to use.
+        pretrained_model (Optional[str]): The name of the pretrained model to use, if any.
+        merging_model (Optional[str]): The name of the merging model to use, if any.
+        alignment_model (Optional[str]): The name of the final alignment model to use, if any.
     """
 
     data = {
         "alignment_name": alignment_name,
         "qa_set_name": qa_set,
         "pretrained_model": pretrained_model,
-        "full_or_peft": full_or_peft,
+        "merging_model": merging_model,
+        "alignment_model": alignment_model,
     }
 
+    # Assuming make_request is a function that handles the request, it's called here
     return make_request("post", Route.alignment + "/startAlignment", data)
 
 
@@ -337,6 +348,8 @@ def get_retriever_status(id_or_name: str) -> Dict[str, str]:
 def start_deployment(
     deployment_name: str,
     alignment: Optional[str] = None,
+    merging: Optional[str] = None,
+    pretraining: Optional[str] = None,
     retriever: Optional[str] = None,
     target_instance: Optional[str] = None,
     openai_compatability: Optional[bool] = False,
@@ -344,6 +357,8 @@ def start_deployment(
     data = {
         "deployment_name": deployment_name,
         "alignment_name": alignment,
+        "merging_name": merging,
+        "pretraining_name": pretraining,
         "retriever_name": retriever,
         "target_instance": target_instance,
         "openai_compatability": openai_compatability,
