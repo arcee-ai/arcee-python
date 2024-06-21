@@ -13,7 +13,7 @@ from arcee.dalm import check_model_status
 from arcee.schemas.routes import Route
 
 
-def upload_corpus_folder(corpus: str, s3_folder_url: str, tokenizer_name: str, block_size: int) -> Dict[str, str]:    
+def upload_corpus_folder(corpus: str, s3_folder_url: str, tokenizer_name: str, block_size: int) -> Dict[str, str]:
     """
     Upload a corpus file to a context
 
@@ -22,17 +22,17 @@ def upload_corpus_folder(corpus: str, s3_folder_url: str, tokenizer_name: str, b
         s3_folder_url (str): The S3 url of the file to upload
         tokenizer_name (str): The name of the tokenizer used for processing the corpus
         block_size (int): The block size used to pack the dataset in LLM continual pre-training,
-        usually can be set to max_position_embeddings of the original model    
+        usually can be set to max_position_embeddings of the original model
     """
 
     if not s3_folder_url.startswith("s3://"):
         raise Exception("s3_folder_url must be an S3 url")
-    
+
     data = {
         "corpus_name": corpus,
         "s3_folder_url": s3_folder_url,
         "tokenizer_name": tokenizer_name,
-        "block_size": block_size
+        "block_size": block_size,
     }
 
     return make_request("post", Route.pretraining + "/corpusUpload", data)
