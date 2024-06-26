@@ -197,7 +197,7 @@ def start_pretraining(pretraining_name: str, corpus: str, base_model: str) -> Di
     return make_request("post", Route.pretraining + "/startTraining", data)
 
 
-def mergekit_yaml(merging_name: str, merging_yaml_path: str) -> Dict[str, str]:
+def mergekit_yaml(merging_name: str, merging_yaml_path: str, target_compute: Optional[str] = None) -> Dict[str, str]:
     """
     Start merging models
 
@@ -215,7 +215,7 @@ def mergekit_yaml(merging_name: str, merging_yaml_path: str) -> Dict[str, str]:
     with open(merging_yaml_path, "r") as file:
         merging_yaml = yaml.safe_load(file)
 
-        data = {"merging_name": merging_name, "best_merge_yaml": str(merging_yaml)}
+        data = {"merging_name": merging_name, "best_merge_yaml": str(merging_yaml), "target_compute": target_compute}
 
         return make_request("post", Route.merging + "/start", data)
 
