@@ -59,7 +59,7 @@ def make_request(
 ) -> Dict[str, str]:
     """Makes the request"""
     arcee_api_url = config.ARCEE_API_URL.rstrip("/")
-    url = f"{arcee_api_url}/{config.ARCEE_API_VERSION}/{route}"
+    url = f"{arcee_api_url}/api/{config.ARCEE_API_VERSION}/{route}"
 
     request_headers = {**default_headers, **headers} if headers else default_headers
     request = requests.Request(method.upper(), url, json=body, params=params)
