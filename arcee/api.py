@@ -111,6 +111,8 @@ def upload_hugging_face_dataset_qa_pairs(qa_set: str, hf_dataset_id: str, datase
     """
     Upload a list of QA pairs from a hugging face dataset to a specific QA set.
 
+    NOTE: you will need to set HUGGINGFACE_TOKEN in your environment to use this function.
+
     Args:
         qa_set (str): The name of the QA set to upload to.
         hf_dataset_id (str): The HF dataset id (eg, org/dataset) that contains ChatML format in a 'messages' column.
