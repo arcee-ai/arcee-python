@@ -20,9 +20,10 @@ def upload_corpus_folder(corpus: str, s3_folder_url: str, tokenizer_name: str, b
     Args:
         corpus (str): The name of the corpus to upload to
         s3_folder_url (str): The S3 url of the file to upload
-        tokenizer_name (str): The name of the tokenizer used for processing the corpus
-        block_size (int): The block size used to pack the dataset in LLM continual pre-training,
-        usually can be set to max_position_embeddings of the original model
+        tokenizer_name (str): (Optional) The name of the tokenizer used for processing the corpus.  If not given, defaults to Llama3 tokenizer.
+        block_size (int): (Optional) The block size used to pack the dataset in LLM continual pre-training,
+          usually can be set to max_position_embeddings of the original model.  If not given, it will default to 8192, which is the max_position_embeddings
+          of Llama3.
     """
 
     if not s3_folder_url.startswith("s3://"):
