@@ -4,6 +4,7 @@ import os
 
 from arcee import config
 from arcee.api import (
+    corpus_status,
     delete_corpus,
     generate,
     get_retriever_status,
@@ -46,6 +47,7 @@ __all__ = [
     "generate",
     "retrieve",
     "delete_corpus",
+    "corpus_status",
     "upload_alignment",
     "mergekit_evolve",
     "mergekit_yaml",
