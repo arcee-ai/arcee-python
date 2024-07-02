@@ -288,6 +288,19 @@ def delete_corpus(corpus: str) -> Dict[str, str]:
     return make_request("post", Route.pretraining + "/deleteCorpus", data)
 
 
+def corpus_status(corpus: str) -> Dict[str, str]:
+    """
+    Check the status of a corpus
+
+    Args:
+        corpus (str): The name of the corpus to check the status
+    """
+
+    data = {"corpus_name": corpus}
+
+    return make_request("post", Route.pretraining + "/corpus/status", data)
+
+
 def start_alignment(
     alignment_name: str,
     qa_set: str,
