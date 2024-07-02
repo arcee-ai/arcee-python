@@ -298,7 +298,7 @@ def corpus_status(corpus: str) -> Dict[str, str]:
 
     data = {"corpus_name": corpus}
 
-    return make_request("post", Route.pretraining + "/corpusStatus", data)
+    return make_request("post", Route.pretraining + "/corpus/status", data)
 
 
 def start_alignment(
