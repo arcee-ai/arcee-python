@@ -195,11 +195,15 @@ def start_pretraining(
     Start pretraining a model
 
     Args:
-        pretraining_name (str): The name of the pretraining job
-        corpus (str): The name of the corpus to use
-        base_model (str): The name of the base model to use
-        target_compute (Optional[str]): The name of the compute to use, eg: "g5.2xlarge" or "capacity".  If omitted, the default compute will be used.
-        capacity_id (Optional[str]): The name of the capacity block id to use.  If omitted, an instance will be launched to perform training.
+        pretraining_name (str): The name of the pretraining job.
+        corpus (str): The name of the corpus to use.
+        base_model (str): The name of the base model to use.
+        target_compute (Optional[str]): The name of the compute to use,
+            e.g., "g5.2xlarge" or "capacity". If omitted, the default
+            compute will be used.
+        capacity_id (Optional[str]): The name of the capacity block ID
+            to use. If omitted, an instance will be launched to perform
+            training.
     """
 
     data = {"pretraining_name": pretraining_name, "corpus_name": corpus, "base_model": base_model}
@@ -220,10 +224,15 @@ def mergekit_yaml(
     Start merging models
 
     Args:
-        merging_name (str): The name of the merging job
-        merging_yaml (str): The yaml file containing the merging instructions - https://github.com/arcee-ai/mergekit/tree/main/examples
-        target_compute (Optional[str]): The name of the compute to use, eg: "g5.2xlarge" or "capacity".  If omitted, the default compute will be used.
-        capacity_id (Optional[str]): The name of the capacity block id to use.  If omitted, an instance will be launched to perform training.
+        merging_name (str): The name of the merging job.
+        merging_yaml (str): The yaml file containing the merging
+            instructions - https://github.com/arcee-ai/mergekit/tree/main/examples.
+        target_compute (Optional[str]): The name of the compute to use,
+            e.g., "g5.2xlarge" or "capacity". If omitted, the default
+            compute will be used.
+        capacity_id (Optional[str]): The name of the capacity block ID
+            to use. If omitted, an instance will be launched to perform
+            training.
     """
 
     if not merging_yaml_path.endswith(".yaml"):
@@ -336,9 +345,6 @@ def start_alignment(
 ) -> Dict[str, str]:
     """
     Start the alignment of a model.
-    This function submits a request to
-    begin the alignment process using
-    the specified models.
 
     Args:
         alignment_name (str): The name of the alignment job.
@@ -346,8 +352,10 @@ def start_alignment(
         pretrained_model (Optional[str]): The name of the pretrained model to use, if any.
         merging_model (Optional[str]): The name of the merging model to use, if any.
         alignment_model (Optional[str]): The name of the final alignment model to use, if any.
-        target_compute (Optional[str]): The name of the compute to use, eg: "g5.2xlarge" or "capacity".  If omitted, the default compute will be used.
-        capacity_id (Optional[str]): The name of the capacity block id to use.  If omitted, an instance will be launched to perform training.
+        target_compute (Optional[str]): The name of the compute to use, e.g., "g5.2xlarge" or
+            "capacity". If omitted, the default compute will be used.
+        capacity_id (Optional[str]): The name of the capacity block ID to use. If omitted, an
+            instance will be launched to perform training.
     """
 
     data = {
