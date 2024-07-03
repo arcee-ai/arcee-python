@@ -184,7 +184,12 @@ def upload_docs(context: str, docs: List[Dict[str, str]]) -> Dict[str, str]:
     return make_request("post", Route.contexts, data)
 
 
-def start_pretraining(pretraining_name: str, corpus: str, base_model: str, target_compute: Optional[str] = None) -> Dict[str, str]:
+def start_pretraining(
+        pretraining_name: str, 
+        corpus: str, 
+        base_model: str, 
+        target_compute: Optional[str] = None,
+        capacity_id: Optional[str] = None) -> Dict[str, str]:
     """
     Start pretraining a model
 
@@ -193,6 +198,7 @@ def start_pretraining(pretraining_name: str, corpus: str, base_model: str, targe
         corpus (str): The name of the corpus to use
         base_model (str): The name of the base model to use
         target_compute (Optional[str]): The name of the compute to use, eg: "g5.2xlarge" or "capacity".  If omitted, the default compute will be used.
+        capacity_id (Optional[str]): The name of the capacity block id to use.  If omitted, an instance will be launched to perform training.
     """
 
     data = {
@@ -204,10 +210,16 @@ def start_pretraining(pretraining_name: str, corpus: str, base_model: str, targe
     if target_compute:
         data["target_compute"] = target_compute
 
+    if capacity_id:
+        data["capacity_id"] = capacity_id
+
     return make_request("post", Route.pretraining + "/startTraining", data)
 
 
-def mergekit_yaml(merging_name: str, merging_yaml_path: str, target_compute: Optional[str] = None) -> Dict[str, str]:
+def mergekit_yaml(merging_name: str,
+                  merging_yaml_path: str,
+                  target_compute: Optional[str] = None,
+                  capacity_id: Optional[str] = None) -> Dict[str, str]:
     """
     Start merging models
 
@@ -215,6 +227,7 @@ def mergekit_yaml(merging_name: str, merging_yaml_path: str, target_compute: Opt
         merging_name (str): The name of the merging job
         merging_yaml (str): The yaml file containing the merging instructions - https://github.com/arcee-ai/mergekit/tree/main/examples
         target_compute (Optional[str]): The name of the compute to use, eg: "g5.2xlarge" or "capacity".  If omitted, the default compute will be used.
+        capacity_id (Optional[str]): The name of the capacity block id to use.  If omitted, an instance will be launched to perform training.
     """
 
     if not merging_yaml_path.endswith(".yaml"):
@@ -226,7 +239,16 @@ def mergekit_yaml(merging_name: str, merging_yaml_path: str, target_compute: Opt
     with open(merging_yaml_path, "r") as file:
         merging_yaml = yaml.safe_load(file)
 
-        data = {"merging_name": merging_name, "best_merge_yaml": str(merging_yaml), "target_compute": target_compute}
+        data = {
+            "merging_name": merging_name,
+            "best_merge_yaml": str(merging_yaml)
+        }
+
+        if target_compute:
+            data["target_compute"] = target_compute
+
+        if capacity_id:
+            data["capacity_id"] = capacity_id
 
         return make_request("post", Route.merging + "/start", data)
 
@@ -317,6 +339,7 @@ def start_alignment(
     merging_model: Optional[str] = None,
     alignment_model: Optional[str] = None,
     target_compute: Optional[str] = None,
+    capacity_id: Optional[str] = None,
 ) -> Dict[str, str]:
     """
     Start the alignment of a model.
@@ -331,6 +354,7 @@ def start_alignment(
         merging_model (Optional[str]): The name of the merging model to use, if any.
         alignment_model (Optional[str]): The name of the final alignment model to use, if any.
         target_compute (Optional[str]): The name of the compute to use, eg: "g5.2xlarge" or "capacity".  If omitted, the default compute will be used.
+        capacity_id (Optional[str]): The name of the capacity block id to use.  If omitted, an instance will be launched to perform training.
     """
 
     data = {
@@ -343,6 +367,9 @@ def start_alignment(
 
     if target_compute:
         data["target_compute"] = target_compute
+
+    if capacity_id:
+        data["capacity_id"] = capacity_id
 
     # Assuming make_request is a function that handles the request, it's called here
     return make_request("post", Route.alignment + "/startAlignment", data)
