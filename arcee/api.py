@@ -184,7 +184,7 @@ def upload_docs(context: str, docs: List[Dict[str, str]]) -> Dict[str, str]:
     return make_request("post", Route.contexts, data)
 
 
-def start_pretraining(pretraining_name: str, corpus: str, base_model: str) -> Dict[str, str]:
+def start_pretraining(pretraining_name: str, corpus: str, base_model: str, target_compute: Optional[str] = None) -> Dict[str, str]:
     """
     Start pretraining a model
 
@@ -192,9 +192,17 @@ def start_pretraining(pretraining_name: str, corpus: str, base_model: str) -> Di
         pretraining_name (str): The name of the pretraining job
         corpus (str): The name of the corpus to use
         base_model (str): The name of the base model to use
+        target_compute (Optional[str]): The name of the compute to use, eg: "g5.2xlarge" or "capacity".  If omitted, the default compute will be used.
     """
 
-    data = {"pretraining_name": pretraining_name, "corpus_name": corpus, "base_model": base_model}
+    data = {
+        "pretraining_name": pretraining_name,
+        "corpus_name": corpus, 
+        "base_model": base_model
+    }
+
+    if target_compute:
+        data["target_compute"] = target_compute
 
     return make_request("post", Route.pretraining + "/startTraining", data)
 
@@ -206,6 +214,7 @@ def mergekit_yaml(merging_name: str, merging_yaml_path: str, target_compute: Opt
     Args:
         merging_name (str): The name of the merging job
         merging_yaml (str): The yaml file containing the merging instructions - https://github.com/arcee-ai/mergekit/tree/main/examples
+        target_compute (Optional[str]): The name of the compute to use, eg: "g5.2xlarge" or "capacity".  If omitted, the default compute will be used.
     """
 
     if not merging_yaml_path.endswith(".yaml"):
@@ -307,6 +316,7 @@ def start_alignment(
     pretrained_model: Optional[str] = None,
     merging_model: Optional[str] = None,
     alignment_model: Optional[str] = None,
+    target_compute: Optional[str] = None,
 ) -> Dict[str, str]:
     """
     Start the alignment of a model.
@@ -320,6 +330,7 @@ def start_alignment(
         pretrained_model (Optional[str]): The name of the pretrained model to use, if any.
         merging_model (Optional[str]): The name of the merging model to use, if any.
         alignment_model (Optional[str]): The name of the final alignment model to use, if any.
+        target_compute (Optional[str]): The name of the compute to use, eg: "g5.2xlarge" or "capacity".  If omitted, the default compute will be used.
     """
 
     data = {
@@ -329,6 +340,9 @@ def start_alignment(
         "merging_model": merging_model,
         "alignment_model": alignment_model,
     }
+
+    if target_compute:
+        data["target_compute"] = target_compute
 
     # Assuming make_request is a function that handles the request, it's called here
     return make_request("post", Route.alignment + "/startAlignment", data)
