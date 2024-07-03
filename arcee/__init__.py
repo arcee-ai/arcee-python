@@ -8,6 +8,7 @@ from arcee.api import (
     delete_corpus,
     generate,
     get_retriever_status,
+    list_pretrainings,
     mergekit_evolve,
     mergekit_yaml,
     retrieve,
@@ -53,4 +54,5 @@ __all__ = [
     "mergekit_yaml",
     "upload_qa_pairs_from_csv",
     "upload_hugging_face_dataset_qa_pairs",
+    "list_pretrainings",
 ]
