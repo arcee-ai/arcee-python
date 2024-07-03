@@ -185,11 +185,12 @@ def upload_docs(context: str, docs: List[Dict[str, str]]) -> Dict[str, str]:
 
 
 def start_pretraining(
-        pretraining_name: str, 
-        corpus: str, 
-        base_model: str, 
-        target_compute: Optional[str] = None,
-        capacity_id: Optional[str] = None) -> Dict[str, str]:
+    pretraining_name: str,
+    corpus: str,
+    base_model: str,
+    target_compute: Optional[str] = None,
+    capacity_id: Optional[str] = None,
+) -> Dict[str, str]:
     """
     Start pretraining a model
 
@@ -201,11 +202,7 @@ def start_pretraining(
         capacity_id (Optional[str]): The name of the capacity block id to use.  If omitted, an instance will be launched to perform training.
     """
 
-    data = {
-        "pretraining_name": pretraining_name,
-        "corpus_name": corpus, 
-        "base_model": base_model
-    }
+    data = {"pretraining_name": pretraining_name, "corpus_name": corpus, "base_model": base_model}
 
     if target_compute:
         data["target_compute"] = target_compute
@@ -216,10 +213,9 @@ def start_pretraining(
     return make_request("post", Route.pretraining + "/startTraining", data)
 
 
-def mergekit_yaml(merging_name: str,
-                  merging_yaml_path: str,
-                  target_compute: Optional[str] = None,
-                  capacity_id: Optional[str] = None) -> Dict[str, str]:
+def mergekit_yaml(
+    merging_name: str, merging_yaml_path: str, target_compute: Optional[str] = None, capacity_id: Optional[str] = None
+) -> Dict[str, str]:
     """
     Start merging models
 
@@ -239,10 +235,7 @@ def mergekit_yaml(merging_name: str,
     with open(merging_yaml_path, "r") as file:
         merging_yaml = yaml.safe_load(file)
 
-        data = {
-            "merging_name": merging_name,
-            "best_merge_yaml": str(merging_yaml)
-        }
+        data = {"merging_name": merging_name, "best_merge_yaml": str(merging_yaml)}
 
         if target_compute:
             data["target_compute"] = target_compute
