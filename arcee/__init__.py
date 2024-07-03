@@ -54,5 +54,5 @@ __all__ = [
     "mergekit_yaml",
     "upload_qa_pairs_from_csv",
     "upload_hugging_face_dataset_qa_pairs",
-    "list_pretrainings"
+    "list_pretrainings",
 ]
