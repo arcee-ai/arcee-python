@@ -4,26 +4,33 @@ on:
   release:
     types: [created]
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "publish"
+  cancel-in-progress: false
+
 jobs:
   publish:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.11"]
-      fail-fast: false
+
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: apt-get update
-        run: sudo apt-get update -y
+      - name: pages
+        uses: actions/configure-pages@v5
+
 
       - name: set up python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version-file: ".python-version"
           cache: "pip"
           cache-dependency-path: "pyproject.toml"
 
@@ -33,8 +40,18 @@ jobs:
       - name: build
         run: inv build
 
-      - name: publish
+      - name: publish pypi
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.TWINE_TOKEN }}
         run: inv publish
+
+      - name: generate docs
+        run: inv docs
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site/arcee
+
+      - id: publish-docs
+        uses: actions/deploy-pages@v4

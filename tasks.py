@@ -148,12 +148,17 @@ def build(ctx: Context) -> None:
 
 @task
 def docs(ctx: Context) -> None:
-    """build
+    """docs
 
-    Build the package.
+    Generate documentation HTML.
     """
     ctx.run(
-        "python -m pdoc arcee -o docs --html --force",
+        "pip install --upgrade pdoc3",
+        pty=True,
+        echo=True,
+    )
+    ctx.run(
+        "python -m pdoc arcee -o _site --html --force",
         pty=True,
         echo=True,
     )
