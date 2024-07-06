@@ -145,6 +145,7 @@ def build(ctx: Context) -> None:
         echo=True,
     )
 
+
 @task
 def docs(ctx: Context) -> None:
     """build
