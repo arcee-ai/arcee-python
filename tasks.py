@@ -145,6 +145,18 @@ def build(ctx: Context) -> None:
         echo=True,
     )
 
+@task
+def docs(ctx: Context) -> None:
+    """build
+
+    Build the package.
+    """
+    ctx.run(
+        "python -m pdoc arcee -o docs --html --force",
+        pty=True,
+        echo=True,
+    )
+
 
 @task
 def publish(ctx: Context) -> None:

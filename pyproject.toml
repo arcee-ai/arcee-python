@@ -35,6 +35,7 @@ dev = [
     "black",
     "invoke",
     "mypy",
+    "pdoc3",
     "pytest",
     "pytest-cov",
     "pytest-env",
