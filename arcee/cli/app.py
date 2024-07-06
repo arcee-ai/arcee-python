@@ -82,7 +82,7 @@ def configure(
         console.print(f"Setting API URL to {api_url}")
         write_configuration_value("ARCEE_API_URL", api_url)
 
-    console.print(f"API key: {"in" if ARCEE_API_KEY else "not in"} config (file or env)")
+    console.print(f"API key: {'in' if ARCEE_API_KEY else 'not in'} config (file or env)")
 
     if api_key:
         console.print("Setting API key")

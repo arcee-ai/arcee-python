@@ -35,7 +35,7 @@ dev = [
     "black",
     "invoke",
     "mypy",
-    "pdoc3",
+    "pdoc3; python_version>='3.8'",
     "pytest",
     "pytest-cov",
     "pytest-env",
