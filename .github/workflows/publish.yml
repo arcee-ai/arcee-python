@@ -30,20 +30,14 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version-file: ".python-version"
-          # uv is not yet supported by this cache, its fast enough to not cache
-          # cache: "pip"
-          # cache-dependency-path: "pyproject.toml"
-
-      - name: install uv
-        uses: yezz123/setup-uv@v4
-        with:
-          uv-venv: "arcee-ci"
+          cache: "pip"
+          cache-dependency-path: "pyproject.toml"
 
       - name: install invoke
-        run: uv pip install invoke
+        run: pip install invoke
 
       - name: install dependencies
-        run: uv pip install '.[dev]'
+        run: pip install '.[dev]'
 
       - name: build
         run: inv build
