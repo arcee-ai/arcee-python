@@ -8,53 +8,8 @@ from arcee.cli.errors import ArceeException
 from arcee.cli.handlers.upload import UploadHandler
 from arcee.cli.handlers.weights import WeightsDownloadHandler
 from arcee.cli.typer import ArceeTyper
-from arcee.dalm import DALM
 
 retriever = ArceeTyper(help="Manage Retrievers")
-
-
-@retriever.command()
-def generate(
-    name: Annotated[str, typer.Argument(help="Model name")],
-    query: Annotated[str, typer.Option(help="Query string")],
-    size: Annotated[int, typer.Option(help="Size of the response")] = 3,
-) -> None:
-    """Generate from model
-
-    Args:
-        name (str): Name of the model
-        query (str): Query string
-        size (int): Size of the response. Defaults to 3.
-    """
-
-    try:
-        dalm = DALM(name=name)
-        resp = dalm.generate(query=query, size=size)
-        typer.secho(resp)
-    except Exception as e:
-        raise ArceeException(message=f"Error generating: {e}") from e
-
-
-@retriever.command()
-def retrieve(
-    name: Annotated[str, typer.Argument(help="Model name")],
-    query: Annotated[str, typer.Option(help="Query string")],
-    size: Annotated[int, typer.Option(help="Size")] = 3,
-) -> None:
-    """Retrieve from model
-
-    Args:
-        name (str): Name of the model
-        query (str): Query string
-        size (int): Size of the response. Defaults to 3.
-
-    """
-    try:
-        dalm = DALM(name=name)
-        resp = dalm.retrieve(query=query, size=size)
-        typer.secho(resp)
-    except Exception as e:
-        raise ArceeException(message=f"Error retrieving: {e}") from e
 
 
 @retriever.command(name="download")
