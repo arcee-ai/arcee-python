@@ -1,18 +1,17 @@
 from importlib.util import find_spec
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 import typer
-from click import ClickException as ArceeException
 from rich.console import Console
-from rich.progress import DownloadColumn, Progress, SpinnerColumn, TextColumn, TimeElapsedColumn, TransferSpeedColumn
+from rich.progress import Progress, SpinnerColumn, TextColumn
 
 from arcee import upload_docs
-from arcee.api import download_weights, model_weight_types
+from arcee.cli.errors import ArceeException
 from arcee.schemas.doc import Doc
 
 if not find_spec("pandas"):
-    raise ModuleNotFoundError("Cannot find pandas. Please run `pip install 'arcee-py[cli]'` for cli support")
+    raise ModuleNotFoundError("Cannot find pandas. Please run `pip install --upgrade 'arcee-py[cli]'` for cli support")
 
 import pandas as pd
 
@@ -165,45 +164,3 @@ class UploadHandler:
             )
             progress.update(uploading, description=f"✅ Uploaded {len(paths)} document(s) to context {name}")
             return resp
-
-
-class WeightsDownloadHandler:
-    """Download weights from Arcee platform"""
-
-    @classmethod
-    def handle_weights_download(cls, kind: model_weight_types, id_or_name: str, path: Optional[Path] = None) -> None:
-        """Download weights from Arcee platform
-
-        Args:
-            kind model_weight_types: Type of model weights.
-            id_or_name str: Name or ID of the model.
-            path Path: Path to save the weights.
-        """
-        try:
-            out = path or Path.cwd() / f"{id_or_name}.tar.gz"
-            console.print(f"Downloading {kind} model weights for {id_or_name} to {out}")
-
-            with open(out, "wb") as f:
-                with download_weights(kind, id_or_name) as response:
-                    response.raise_for_status()
-                    size = int(response.headers.get("Content-Length", 0))
-
-                    with Progress(
-                        *Progress.get_default_columns(),
-                        DownloadColumn(),
-                        TimeElapsedColumn(),
-                        TransferSpeedColumn(),
-                        transient=True,
-                    ) as progress:
-                        task = progress.add_task(
-                            f"[blue]Downloading {id_or_name} weights...", total=size if size > 0 else None
-                        )
-
-                        for chunk in response.iter_content(chunk_size=8192):
-                            f.write(chunk)
-                            progress.update(task, advance=len(chunk))
-
-                        console.print(f"Downloaded {out} in {progress.get_time()} seconds")
-        except Exception as e:
-            console.print_exception()
-            raise ArceeException(message=f"Error downloading {kind} weights: {e}") from e

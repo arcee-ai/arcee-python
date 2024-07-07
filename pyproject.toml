@@ -1,7 +1,6 @@
 [build-system]
-requires = ["hatchling<=1.18.0"]
+requires = ["hatchling>=1.24.0, <1.25.0"]
 build-backend = "hatchling.build"
-
 
 [project]
 name = "arcee-py"
@@ -10,18 +9,18 @@ readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
 dynamic = ["version", "description"]
-packages = [
-     { include = "arcee" }
- ]
 dependencies = [
-    "requests>=2.32.2,<3.0",
-    "typer>=0.12.3,<1.0",
-    "rich>=13.7.1,<14.0",
-    "pyyaml>=6.0.1,<7.0",
-    "pydantic>=2.4.2,<3.0",
-    "StrEnum>=0.4.15,<1.0",
-    "datasets>=2.19.2,<3.0",
+    "requests>=2.32.2, <3.0",
+    "typer>=0.12.3, <1.0",
+    "rich>=13.7.1, <14.0",
+    "pyyaml>=6.0.1, <7.0",
+    "pydantic>=2.4.2, <3.0",
+    "StrEnum>=0.4.15, <1.0",
+    "datasets>=2.19.2, <3.0",
 ]
+
+[project.scripts]
+arcee = "arcee.cli.app:cli"
 
 [tool.hatch.build.targets.wheel]
 packages = ["arcee"]
@@ -32,16 +31,17 @@ path = "arcee/__init__.py"
 
 [project.optional-dependencies]
 dev = [
+    "arcee-py[cli]",
     "black",
     "invoke",
     "mypy",
+    "pdoc3; python_version>='3.8'",
     "pytest",
     "pytest-cov",
     "pytest-env",
     "ruff",
     "types-PyYAML",
     "types-requests",
-    "pandas",
     "pandas-stubs"
 ]
 cli = [
@@ -58,8 +58,14 @@ line-length = 120
 target-version = "py311"
 respect-gitignore = true
 line-length = 120
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.ruff.lint]
 # Pyflakes, bugbear, pycodestyle, pycodestyle warnings, isort
-lint.select=["TID252", "B", "F", "E", "W", "I001"]
+select=["TID252", "B", "F", "E", "W", "I001"]
+# extend-select = ["C901"]
 
 [tool.ruff.lint.isort]
 case-sensitive = true

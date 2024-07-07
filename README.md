@@ -1,16 +1,20 @@
-# Arcee Client Docs
+# Arcee Python Client
 
-The Arcee client for executing domain-adpated language model routines
+> The Arcee Python client allows you to manage CPT, SFT, DPO, and Merge models on the Arcee Platform.
+
+This client may be used as a CLI by invoking `arcee` from the terminal, or as an SDK for programmatic use by `import arcee` in Python.
+
+Learn more at https://docs.arcee.ai
 
 ## Installation
 
 ```
-pip install arcee-py
+pip install --upgrade arcee-py
 ```
 
 ## Authenticating
 
-Your Arcee API key is obtained at app.arcee.ai
+Your Arcee API key is obtained at https://app.arcee.ai
 
 In bash:
 
@@ -68,9 +72,9 @@ NOTE: you will need to set `HUGGINGFACE_TOKEN` in your environment to use this f
 
 ```
 arcee.api.upload_hugging_face_dataset_qa_pairs(
-    "my_qa_pairs", 
-    hf_dataset_id="org/dataset", 
-    dataset_split="train", 
+    "my_qa_pairs",
+    hf_dataset_id="org/dataset",
+    dataset_split="train",
     data_format="chatml"
 )
 ```
