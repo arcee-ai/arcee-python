@@ -428,6 +428,19 @@ def stop_deployment(deployment_name: str) -> Dict[str, str]:
     return make_request("post", Route.deployment + "/stopDeployment", data)
 
 
+def deployment_status(deployment: str) -> Dict[str, str]:
+    """
+    Check the status of a deployment
+
+    Args:
+        deployment (str): The name of the deployment to check the status
+    """
+
+    data = {"deployment_name": deployment}
+
+    return make_request("get", Route.deployment + "/status", data)
+
+
 def generate(deployment_name: str, query: str) -> Dict[str, str]:
     data = {"deployment_name": deployment_name, "query": query}
     return make_request("post", Route.deployment + "/generate", data)

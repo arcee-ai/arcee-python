@@ -6,6 +6,7 @@ from arcee import config
 from arcee.api import (
     corpus_status,
     delete_corpus,
+    deployment_status,
     generate,
     get_retriever_status,
     list_pretrainings,
@@ -53,4 +54,5 @@ __all__ = [
     "upload_qa_pairs_from_csv",
     "upload_hugging_face_dataset_qa_pairs",
     "list_pretrainings",
+    "deployment_status",
 ]
