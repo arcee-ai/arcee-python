@@ -438,7 +438,7 @@ def deployment_status(deployment: str) -> Dict[str, str]:
 
     data = {"deployment_name": deployment}
 
-    return make_request("post", Route.deployment + "/status", data)
+    return make_request("get", Route.deployment + "/status", data)
 
 
 def generate(deployment_name: str, query: str) -> Dict[str, str]:
