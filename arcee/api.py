@@ -307,6 +307,7 @@ def mergekit_evolve(
 
     return make_request("post", Route.merging + "/start", data)
 
+
 def merging_status(merging: str) -> Dict[str, str]:
     """
     Check the status of a merging job
