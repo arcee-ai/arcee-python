@@ -12,6 +12,7 @@ from arcee.api import (
     list_pretrainings,
     mergekit_evolve,
     mergekit_yaml,
+    merging_status,
     retrieve,
     start_alignment,
     start_deployment,
@@ -55,4 +56,6 @@ __all__ = [
     "upload_hugging_face_dataset_qa_pairs",
     "list_pretrainings",
     "deployment_status",
+    "merging_status",
+
 ]

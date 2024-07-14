@@ -307,6 +307,18 @@ def mergekit_evolve(
 
     return make_request("post", Route.merging + "/start", data)
 
+def merging_status(merging: str) -> Dict[str, str]:
+    """
+    Check the status of a merging job
+
+    Args:
+        merging (str): The name of the deployment to check the status
+    """
+
+    data = {"merging_name": merging}
+
+    return make_request("get", Route.merging + "/status", data)
+
 
 def delete_corpus(corpus: str) -> Dict[str, str]:
     """
