@@ -353,6 +353,7 @@ def start_alignment(
     pretrained_model: Optional[str] = None,
     merging_model: Optional[str] = None,
     alignment_model: Optional[str] = None,
+    hf_model: Optional[str] = None,
     target_compute: Optional[str] = None,
     capacity_id: Optional[str] = None,
 ) -> Dict[str, str]:
@@ -377,13 +378,10 @@ def start_alignment(
         "pretrained_model": pretrained_model,
         "merging_model": merging_model,
         "alignment_model": alignment_model,
+        "hf_model": hf_model,
+        "target_compute": target_compute,
+        "capacity_id": capacity_id,
     }
-
-    if target_compute:
-        data["target_compute"] = target_compute
-
-    if capacity_id:
-        data["capacity_id"] = capacity_id
 
     # Assuming make_request is a function that handles the request, it's called here
     return make_request("post", Route.alignment + "/startAlignment", data)
