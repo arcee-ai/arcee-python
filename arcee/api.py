@@ -111,6 +111,8 @@ def upload_hugging_face_dataset_qa_pairs(qa_set: str, hf_dataset_id: str, datase
     """
     Upload a list of QA pairs from a hugging face dataset to a specific QA set.
 
+    NOTE: you will need to set HUGGINGFACE_TOKEN in your environment to use this function.
+
     Args:
         qa_set (str): The name of the QA set to upload to.
         hf_dataset_id (str): The HF dataset id (eg, org/dataset) that contains ChatML format in a 'messages' column.
@@ -182,28 +184,55 @@ def upload_docs(context: str, docs: List[Dict[str, str]]) -> Dict[str, str]:
     return make_request("post", Route.contexts, data)
 
 
-def start_pretraining(pretraining_name: str, corpus: str, base_model: str) -> Dict[str, str]:
+def start_pretraining(
+    pretraining_name: str,
+    corpus: str,
+    base_model: str,
+    target_compute: Optional[str] = None,
+    capacity_id: Optional[str] = None,
+) -> Dict[str, str]:
     """
     Start pretraining a model
 
     Args:
-        pretraining_name (str): The name of the pretraining job
-        corpus (str): The name of the corpus to use
-        base_model (str): The name of the base model to use
+        pretraining_name (str): The name of the pretraining job.
+        corpus (str): The name of the corpus to use.
+        base_model (str): The name of the base model to use.
+        target_compute (Optional[str]): The name of the compute to use,
+            e.g., "g5.2xlarge" or "capacity". If omitted, the default
+            compute will be used.
+        capacity_id (Optional[str]): The name of the capacity block ID
+            to use. If omitted, an instance will be launched to perform
+            training.
     """
 
     data = {"pretraining_name": pretraining_name, "corpus_name": corpus, "base_model": base_model}
 
+    if target_compute:
+        data["target_compute"] = target_compute
+
+    if capacity_id:
+        data["capacity_id"] = capacity_id
+
     return make_request("post", Route.pretraining + "/startTraining", data)
 
 
-def mergekit_yaml(merging_name: str, merging_yaml_path: str, target_compute: Optional[str] = None) -> Dict[str, str]:
+def mergekit_yaml(
+    merging_name: str, merging_yaml_path: str, target_compute: Optional[str] = None, capacity_id: Optional[str] = None
+) -> Dict[str, str]:
     """
     Start merging models
 
     Args:
-        merging_name (str): The name of the merging job
-        merging_yaml (str): The yaml file containing the merging instructions - https://github.com/arcee-ai/mergekit/tree/main/examples
+        merging_name (str): The name of the merging job.
+        merging_yaml (str): The yaml file containing the merging
+            instructions - https://github.com/arcee-ai/mergekit/tree/main/examples.
+        target_compute (Optional[str]): The name of the compute to use,
+            e.g., "g5.2xlarge" or "capacity". If omitted, the default
+            compute will be used.
+        capacity_id (Optional[str]): The name of the capacity block ID
+            to use. If omitted, an instance will be launched to perform
+            training.
     """
 
     if not merging_yaml_path.endswith(".yaml"):
@@ -215,7 +244,13 @@ def mergekit_yaml(merging_name: str, merging_yaml_path: str, target_compute: Opt
     with open(merging_yaml_path, "r") as file:
         merging_yaml = yaml.safe_load(file)
 
-        data = {"merging_name": merging_name, "best_merge_yaml": str(merging_yaml), "target_compute": target_compute}
+        data = {"merging_name": merging_name, "best_merge_yaml": str(merging_yaml)}
+
+        if target_compute:
+            data["target_compute"] = target_compute
+
+        if capacity_id:
+            data["capacity_id"] = capacity_id
 
         return make_request("post", Route.merging + "/start", data)
 
@@ -273,6 +308,19 @@ def mergekit_evolve(
     return make_request("post", Route.merging + "/start", data)
 
 
+def merging_status(merging: str) -> Dict[str, str]:
+    """
+    Check the status of a merging job
+
+    Args:
+        merging (str): The name of the alignment to check the status
+    """
+
+    data = {"merging_name": merging}
+
+    return make_request("get", Route.merging + "/status", data)
+
+
 def delete_corpus(corpus: str) -> Dict[str, str]:
     """
     Delete a corpus
@@ -284,6 +332,19 @@ def delete_corpus(corpus: str) -> Dict[str, str]:
     data = {"corpus_name": corpus}
 
     return make_request("post", Route.pretraining + "/deleteCorpus", data)
+
+
+def corpus_status(corpus: str) -> Dict[str, str]:
+    """
+    Check the status of a corpus
+
+    Args:
+        corpus (str): The name of the corpus to check the status
+    """
+
+    data = {"corpus_name": corpus}
+
+    return make_request("post", Route.pretraining + "/corpus/status", data)
 
 
 def start_alignment(
@@ -298,9 +359,6 @@ def start_alignment(
 ) -> Dict[str, str]:
     """
     Start the alignment of a model.
-    This function submits a request to
-    begin the alignment process using
-    the specified models.
 
     Args:
         alignment_name (str): The name of the alignment job.
@@ -308,6 +366,10 @@ def start_alignment(
         pretrained_model (Optional[str]): The name of the pretrained model to use, if any.
         merging_model (Optional[str]): The name of the merging model to use, if any.
         alignment_model (Optional[str]): The name of the final alignment model to use, if any.
+        target_compute (Optional[str]): The name of the compute to use, e.g., "g5.2xlarge" or
+            "capacity". If omitted, the default compute will be used.
+        capacity_id (Optional[str]): The name of the capacity block ID to use. If omitted, an
+            instance will be launched to perform training.
     """
 
     data = {
@@ -323,6 +385,18 @@ def start_alignment(
 
     # Assuming make_request is a function that handles the request, it's called here
     return make_request("post", Route.alignment + "/startAlignment", data)
+
+
+def alignment_status(alignment: str) -> Dict[str, str]:
+    """
+    Check the status of an alignment job
+    Args:
+        alignment (str): The name of the alignment to check the status
+    """
+
+    data = {"alignment_name": alignment}
+
+    return make_request("get", Route.alignment + "/status", data)
 
 
 def upload_alignment(alignment_name: str, alignment_id: str, qa_set_id: str, pretraining_id: str) -> Dict[str, str]:
@@ -375,6 +449,19 @@ def start_deployment(
 def stop_deployment(deployment_name: str) -> Dict[str, str]:
     data = {"deployment_name": deployment_name}
     return make_request("post", Route.deployment + "/stopDeployment", data)
+
+
+def deployment_status(deployment: str) -> Dict[str, str]:
+    """
+    Check the status of a deployment
+
+    Args:
+        deployment (str): The name of the deployment to check the status
+    """
+
+    data = {"deployment_name": deployment}
+
+    return make_request("get", Route.deployment + "/status", data)
 
 
 def generate(deployment_name: str, query: str) -> Dict[str, str]:

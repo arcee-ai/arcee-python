@@ -1,16 +1,20 @@
-# Arcee Client Docs
+# Arcee Python Client
 
-The Arcee client for executing domain-adpated language model routines
+> The Arcee Python client allows you to manage CPT, SFT, DPO, and Merge models on the Arcee Platform.
+
+This client may be used as a CLI by invoking `arcee` from the terminal, or as an SDK for programmatic use by `import arcee` in Python.
+
+Learn more at https://docs.arcee.ai
 
 ## Installation
 
 ```
-pip install arcee-py
+pip install --upgrade arcee-py
 ```
 
 ## Authenticating
 
-Your Arcee API key is obtained at app.arcee.ai
+Your Arcee API key is obtained at https://app.arcee.ai
 
 In bash:
 
@@ -41,44 +45,38 @@ If you do not specify an organization, your default organization will be used. Y
 
 ## Upload Context
 
-Upload context for your domain adapted langauge model to draw from.
+Upload context for retriever training:
 
 ```
 import arcee
-arcee.upload_doc("pubmed", doc_name="doc1", doc_text="whoa")
-# or
-# arcee.upload_docs("pubmed", docs=[{"doc_name": "doc1", "doc_text": "foo"}, {"doc_name": "doc2", "doc_text": "bar"}])
+arcee.upload_docs("pubmed", docs=[{"doc_name": "doc1", "doc_text": "foo"}, {"doc_name": "doc2", "doc_text": "bar"}])
 ```
 
-## Train DALM
+## Upload Finetuning Dataset
 
-Train a DALM with the context you have uploaded.
-
-```
-import arcee
-dalm = arcee.train_dalm("medical_dalm", context="pubmed")
-# Wait for training to complete
-arcee.get_dalm_status("medical_dalm")
-```
-
-The DALM training procedure trains your model in context and stands up an index for your model to draw from.
-
-## DALM Generation
+### Method 1: Via CSV
 
 ```
-import arcee
-med_dalm = arcee.get_dalm("medical_dalm")
-med_dalm.generate("What are the components of Scoplamine?")
+arcee.upload_instructions_from_csv(
+  "finetuning-dataset-name",
+  csv_path="./your_data.csv",
+  prompt_column="prompt",
+  completion_column="completion"
+)
 ```
 
-## DALM Retrieval
+### Method 2: Via HF Dataset
 
-Retrieve documents for a given query and to view them or plug into a different LLM.
+NOTE: you will need to set `HUGGINGFACE_TOKEN` in your environment to use this function.
+
 
 ```
-import arcee
-med_dalm = arcee.get_dalm("medical_dalm")
-med_dalm.retrieve("my query")
+arcee.api.upload_hugging_face_dataset_qa_pairs(
+    "my_qa_pairs",
+    hf_dataset_id="org/dataset",
+    dataset_split="train",
+    data_format="chatml"
+)
 ```
 
 ## Using the Arcee CLI
