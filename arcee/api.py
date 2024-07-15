@@ -313,7 +313,7 @@ def merging_status(merging: str) -> Dict[str, str]:
     Check the status of a merging job
 
     Args:
-        merging (str): The name of the deployment to check the status
+        merging (str): The name of the alignment to check the status
     """
 
     data = {"merging_name": merging}
@@ -387,6 +387,18 @@ def start_alignment(
 
     # Assuming make_request is a function that handles the request, it's called here
     return make_request("post", Route.alignment + "/startAlignment", data)
+
+
+def alignment_status(alignment: str) -> Dict[str, str]:
+    """
+    Check the status of an alignment job
+    Args:
+        alignment (str): The name of the alignment to check the status
+    """
+
+    data = {"alignment_name": alignment}
+
+    return make_request("get", Route.alignment + "/status", data)
 
 
 def upload_alignment(alignment_name: str, alignment_id: str, qa_set_id: str, pretraining_id: str) -> Dict[str, str]:

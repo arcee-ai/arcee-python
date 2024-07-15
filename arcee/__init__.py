@@ -4,6 +4,7 @@ import os
 
 from arcee import config
 from arcee.api import (
+    alignment_status,
     corpus_status,
     delete_corpus,
     deployment_status,
@@ -57,4 +58,5 @@ __all__ = [
     "list_pretrainings",
     "deployment_status",
     "merging_status",
+    "alignment_status",
 ]
