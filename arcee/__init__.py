@@ -58,5 +58,5 @@ __all__ = [
     "list_pretrainings",
     "deployment_status",
     "merging_status",
-    "alignment_status"
+    "alignment_status",
 ]
