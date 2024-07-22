@@ -1,9 +1,3 @@
-## Ticket
-<!---
-Attach a link to the ticket. leave nothing other than this hyperlinked task here.
--->
-[Task](https://arceeai.slack.com/lists/XXXXXXX/YYYYYYY?record_id=ZZZZZZZZ)
-
 ## Description
 <!---
 include a summary of the change in technical terms.  The groomed product ticket provides the what, why, and helpful direction as to how if necessary.
@@ -17,8 +11,7 @@ how should a reviewer test the feature locally or in staging when possible. Prov
 Before you submit this PR, please make sure you have completed the following items:
 - [ ] Tested against a dev environment?
 - [ ] Documentation is up to date or expanded?
-- [ ] Groomed task link is attached?
-- [ ] Additional checklists attached based on playbooks relevant to task?
+- [ ] Is there a detailed github issue?
 - [ ] Did you get a code review?
 
 <!---
