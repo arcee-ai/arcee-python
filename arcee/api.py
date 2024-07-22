@@ -308,6 +308,19 @@ def mergekit_evolve(
     return make_request("post", Route.merging + "/start", data)
 
 
+def merging_status(merging: str) -> Dict[str, str]:
+    """
+    Check the status of a merging job
+
+    Args:
+        merging (str): The name of the alignment to check the status
+    """
+
+    data = {"merging_name": merging}
+
+    return make_request("get", Route.merging + "/status", data)
+
+
 def delete_corpus(corpus: str) -> Dict[str, str]:
     """
     Delete a corpus
@@ -340,6 +353,7 @@ def start_alignment(
     pretrained_model: Optional[str] = None,
     merging_model: Optional[str] = None,
     alignment_model: Optional[str] = None,
+    hf_model: Optional[str] = None,
     target_compute: Optional[str] = None,
     capacity_id: Optional[str] = None,
     full_or_peft: Optional[str] = "full",
@@ -366,16 +380,25 @@ def start_alignment(
         "merging_model": merging_model,
         "alignment_model": alignment_model,
         "full_or_peft": full_or_peft,
+        "hf_model": hf_model,
+        "target_compute": target_compute,
+        "capacity_id": capacity_id,
     }
-
-    if target_compute:
-        data["target_compute"] = target_compute
-
-    if capacity_id:
-        data["capacity_id"] = capacity_id
 
     # Assuming make_request is a function that handles the request, it's called here
     return make_request("post", Route.alignment + "/startAlignment", data)
+
+
+def alignment_status(alignment: str) -> Dict[str, str]:
+    """
+    Check the status of an alignment job
+    Args:
+        alignment (str): The name of the alignment to check the status
+    """
+
+    data = {"alignment_name": alignment}
+
+    return make_request("get", Route.alignment + "/status", data)
 
 
 def upload_alignment(alignment_name: str, alignment_id: str, qa_set_id: str, pretraining_id: str) -> Dict[str, str]:
@@ -428,6 +451,19 @@ def start_deployment(
 def stop_deployment(deployment_name: str) -> Dict[str, str]:
     data = {"deployment_name": deployment_name}
     return make_request("post", Route.deployment + "/stopDeployment", data)
+
+
+def deployment_status(deployment: str) -> Dict[str, str]:
+    """
+    Check the status of a deployment
+
+    Args:
+        deployment (str): The name of the deployment to check the status
+    """
+
+    data = {"deployment_name": deployment}
+
+    return make_request("get", Route.deployment + "/status", data)
 
 
 def generate(deployment_name: str, query: str) -> Dict[str, str]:

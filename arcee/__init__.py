@@ -1,16 +1,19 @@
-__version__ = "1.3.3"
+__version__ = "1.3.4"
 
 import os
 
 from arcee import config
 from arcee.api import (
+    alignment_status,
     corpus_status,
     delete_corpus,
+    deployment_status,
     generate,
     get_retriever_status,
     list_pretrainings,
     mergekit_evolve,
     mergekit_yaml,
+    merging_status,
     retrieve,
     start_alignment,
     start_deployment,
@@ -53,4 +56,7 @@ __all__ = [
     "upload_qa_pairs_from_csv",
     "upload_hugging_face_dataset_qa_pairs",
     "list_pretrainings",
+    "deployment_status",
+    "merging_status",
+    "alignment_status",
 ]
