@@ -356,6 +356,7 @@ def start_alignment(
     hf_model: Optional[str] = None,
     target_compute: Optional[str] = None,
     capacity_id: Optional[str] = None,
+    full_or_peft: Optional[str] = "full",
 ) -> Dict[str, str]:
     """
     Start the alignment of a model.
@@ -378,6 +379,7 @@ def start_alignment(
         "pretrained_model": pretrained_model,
         "merging_model": merging_model,
         "alignment_model": alignment_model,
+        "full_or_peft": full_or_peft,
         "hf_model": hf_model,
         "target_compute": target_compute,
         "capacity_id": capacity_id,
