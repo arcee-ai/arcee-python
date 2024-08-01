@@ -357,7 +357,7 @@ def start_alignment(
     target_compute: Optional[str] = None,
     capacity_id: Optional[str] = None,
     alignment_type: str = "sft",
-    full_or_peft: Optional[str] = "full"
+    full_or_peft: Optional[str] = "full",
 ) -> Dict[str, str]:
     """
     Start the alignment of a model.
