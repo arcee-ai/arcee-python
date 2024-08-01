@@ -357,6 +357,7 @@ def start_alignment(
     target_compute: Optional[str] = None,
     capacity_id: Optional[str] = None,
     alignment_type: str = "sft",
+    full_or_peft: Optional[str] = "full"
 ) -> Dict[str, str]:
     """
     Start the alignment of a model.
@@ -383,6 +384,7 @@ def start_alignment(
         "pretrained_model": pretrained_model,
         "merging_model": merging_model,
         "alignment_model": alignment_model,
+        "full_or_peft": full_or_peft,
         "hf_model": hf_model,
         "target_compute": target_compute,
         "capacity_id": capacity_id,
@@ -457,15 +459,15 @@ def stop_deployment(deployment_name: str) -> Dict[str, str]:
     return make_request("post", Route.deployment + "/stopDeployment", data)
 
 
-def deployment_status(deployment: str) -> Dict[str, str]:
+def deployment_status(deployment_name: str) -> Dict[str, str]:
     """
     Check the status of a deployment
 
     Args:
-        deployment (str): The name of the deployment to check the status
+        deployment_name (str): The name of the deployment to check the status
     """
 
-    data = {"deployment_name": deployment}
+    data = {"deployment_name": deployment_name}
 
     return make_request("get", Route.deployment + "/status", data)
 
