@@ -472,8 +472,24 @@ def deployment_status(deployment_name: str) -> Dict[str, str]:
     return make_request("get", Route.deployment + "/status", data)
 
 
-def generate(deployment_name: str, query: str) -> Dict[str, str]:
-    data = {"deployment_name": deployment_name, "query": query}
+def generate(
+    deployment_name: str,
+    query: str,
+    repetition_penalty: float | None = None,
+    top_k: int | None = None,
+    max_new_tokens: int | None = None,
+    temperature: float | None = None,
+    top_p: float | None = None
+) -> Dict[str, str]:
+    data = {
+        "deployment_name": deployment_name,
+        "query": query,
+        "repetition_penalty": repetition_penalty,
+        "top_k": top_k,
+        "max_new_tokens": max_new_tokens,
+        "temperature": temperature,
+        "top_p": top_p
+    }
     return make_request("post", Route.deployment + "/generate", data)
 
 
