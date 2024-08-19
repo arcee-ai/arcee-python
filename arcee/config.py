@@ -39,6 +39,7 @@ def write_configuration_value(key: str, value: str) -> None:
             except json.JSONDecodeError:
                 pass
     else:
+        conf_path.parent.mkdir(parents=True, exist_ok=True)
         conf_path.touch()
 
     config[key] = value
