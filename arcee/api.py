@@ -474,12 +474,13 @@ def deployment_status(deployment_name: str) -> Dict[str, str]:
 
 def generate(
     deployment_name: str,
-    query: str,
+    query: str | None = None,
+    messages: List[Dict[str, str]] | None = None,
     repetition_penalty: float | None = None,
     top_k: int | None = None,
     max_new_tokens: int | None = None,
     temperature: float | None = None,
-    top_p: float | None = None
+    top_p: float | None = None,
 ) -> Dict[str, str]:
     data = {
         "deployment_name": deployment_name,
@@ -488,7 +489,8 @@ def generate(
         "top_k": top_k,
         "max_new_tokens": max_new_tokens,
         "temperature": temperature,
-        "top_p": top_p
+        "messages": messages,
+        "top_p": top_p,
     }
     return make_request("post", Route.deployment + "/generate", data)
 
