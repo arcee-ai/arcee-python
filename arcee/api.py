@@ -346,7 +346,6 @@ def corpus_status(corpus: str) -> Dict[str, str]:
 
     return make_request("post", Route.pretraining + "/corpus/status", data)
 
-
 def start_alignment(
     alignment_name: str,
     qa_set: Optional[str] = None,
@@ -533,3 +532,72 @@ def download_weights(type: model_weight_types, id_or_name: str) -> Response:
     """
     route = type_to_weights_route[type].format(id_or_name=id_or_name)
     return nonjson_request("get", route, stream=True)
+
+
+def start_evaluation(
+    evaluations_name: str,
+    eval_type: Optional[str] = None,
+    qa_set_name: Optional[str] = None,
+    deployment_model: Optional[Dict[str, Optional[str]]] = None,
+    reference_model: Optional[Dict[str, Optional[str]]] = None,
+    judge_model: Optional[Dict[str, Optional[str]]] = None,
+    model_type: Optional[str] = "arcee",
+    model_args: Optional[str] = None,
+    tasks_list: Optional[List[str]] = None,
+    target_compute: Optional[str] = None,
+    capacity_id: Optional[str] = None,
+    batch_size: Optional[int] = None
+) -> Dict[str, str]:
+    """
+    Start an evaluation job.
+
+    LLM as a judge model config should be in a format similar to:
+    deployment_model = {
+        "model_name": "arcee-model-name"
+    }
+    reference_model" = {
+        "model_name": "claude-3-5-sonnet-20240620",
+        "base_url": "https://api.anthropic.com/v1",
+        "api_key": anthropic_api_key
+    }
+    judge_model = {
+        "model_name": "gpt-4o",
+        "base_url": "https://api.openai.com/v1/",
+        "api_key": openai_api_key,
+        "custom_prompt": "Evaluate which response better adheres to factual accuracy, clarity, and relevance."
+    }
+
+    Args:
+        evaluations_name (str): The name of the evaluation job.
+        eval_type (Optional[str]): The type of evaluation, e.g., "llm_as_a_judge" or "lm-eval".
+        qa_set_name (Optional[str]): The name of the QA set being evaluated.
+        deployment_model (Optional[Dict[str, Optional[str]]]): Configuration for the deployment model.
+        reference_model (Optional[Dict[str, Optional[str]]]): Configuration for the reference model.
+        judge_model (Optional[Dict[str, Optional[str]]]): Configuration for the judge model.
+        model_type (Optional[str]): The type of the model, default is "arcee".
+        model_args (Optional[str]): Model arguments to be fed into lm-eval harness.
+        tasks_list (Optional[List[str]]): List of tasks for the evaluation. See https://github.com/EleutherAI/lm-evaluation-harness/blob/main/lm_eval/tasks/README.md for more information.
+        target_compute (Optional[str]): The name of the compute instance to use, default is "p3.2xlarge".
+        capacity_id (Optional[str]): The name of the capacity block ID to use.
+        batch_size (Optional[int]): Batch size for evaluation.
+    """
+
+    data = {
+        "evaluations_name": evaluations_name,
+        "model_type": model_type,
+        "model_args": model_args,
+        "tasks_list": tasks_list if tasks_list else [],
+        "target_compute": target_compute,
+        "capacity_id": capacity_id,
+        "batch_size": batch_size,
+        "eval_type": eval_type,
+        "qa_set_name": qa_set_name,
+        "deployment_model": deployment_model,
+        "reference_model": reference_model,
+        "judge_model": judge_model,
+    }
+
+    # Remove any keys with None values
+    data = {k: v for k, v in data.items() if v is not None}
+
+    return make_request("post", Route.evaluation + "/evaluation/start", data)

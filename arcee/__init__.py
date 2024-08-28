@@ -17,6 +17,7 @@ from arcee.api import (
     retrieve,
     start_alignment,
     start_deployment,
+    start_evaluation,
     start_pretraining,
     start_retriever_training,
     stop_deployment,
@@ -59,4 +60,5 @@ __all__ = [
     "deployment_status",
     "merging_status",
     "alignment_status",
+    "start_evaluation",
 ]
