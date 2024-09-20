@@ -417,15 +417,9 @@ def upload_alignment(alignment_name: str, alignment_id: str, qa_set_id: str, pre
     return make_request("post", Route.alignment + "/uploadAlignment", data)
 
 
-def start_retriever_training(name: str, context: str) -> None:
-    data = {"name": name, "context": context}
-    make_request("post", Route.train_model, data)
-    org = get_current_org()
-    status_url = f"{config.ARCEE_APP_URL}/{org}/models/{name}/training"
-    print(
-        f'Retriever model training started - view model status at {status_url} \
-          or with arcee.get_retriever_status("{name}")'
-    )
+def train_retriever(name: str, corpus: str) -> None:
+    data = {"name": name, "corpus": corpus}
+    return make_request("post", Route.train_model, data)
 
 
 def get_retriever_status(id_or_name: str) -> Dict[str, str]:
