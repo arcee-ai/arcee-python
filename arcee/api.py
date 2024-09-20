@@ -441,6 +441,8 @@ def start_deployment(
     retriever: Optional[str] = None,
     target_instance: Optional[str] = None,
     openai_compatability: Optional[bool] = False,
+    max_input_length: Optional[int] = 1024,
+    max_total_tokens: Optional[int] = 2048
 ) -> Dict[str, str]:
     data = {
         "deployment_name": deployment_name,
@@ -450,6 +452,8 @@ def start_deployment(
         "retriever_name": retriever,
         "target_instance": target_instance,
         "openai_compatability": openai_compatability,
+        "max_input_length": max_input_length,
+        "max_total_tokens": max_total_tokens
     }
     return make_request("post", Route.deployment + "/startDeployment", data)
 
@@ -494,15 +498,9 @@ def generate(
     }
     return make_request("post", Route.deployment + "/generate", data)
 
-
-def retrieve(deployment_name: str, query: str, size: Optional[int] = 5) -> Dict[str, str]:
-    data = {"deployment_name": deployment_name, "query": query, "size": size}
-    return make_request("post", Route.deployment + "/retrieve", data)
-
-
-def embed(deployment_name: str, query: str) -> Dict[str, str]:
-    data = {"deployment_name": deployment_name, "query": query}
-    return make_request("post", Route.deployment + "/embed", data)
+def embed(model_name: str, query: str) -> Dict[str, str]:
+    data = {"model_name": model_name, "query": query}
+    return make_request("post", Route.embed, data)
 
 
 def get_current_org() -> str:

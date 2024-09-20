@@ -1,4 +1,4 @@
-__version__ = "1.3.7"
+__version__ = "1.3.8"
 
 import os
 
@@ -14,7 +14,7 @@ from arcee.api import (
     mergekit_evolve,
     mergekit_yaml,
     merging_status,
-    retrieve,
+    embed,
     start_alignment,
     start_deployment,
     start_pretraining,
@@ -47,7 +47,7 @@ __all__ = [
     "start_deployment",
     "stop_deployment",
     "generate",
-    "retrieve",
+    "embed",
     "delete_corpus",
     "corpus_status",
     "upload_alignment",

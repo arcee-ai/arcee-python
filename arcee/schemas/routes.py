@@ -8,6 +8,7 @@ class Route(StrEnum):
     train_retriever = "retrievers/train"
     train_retriever_status = "retrievers/status/{id_or_name}"
     identity = "whoami"
+    embed = "models/embed"
     retrieve = "models/retrieve"
     generate = "models/generate"
     pretraining = "pretraining"
