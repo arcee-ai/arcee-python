@@ -417,7 +417,12 @@ def upload_alignment(alignment_name: str, alignment_id: str, qa_set_id: str, pre
     return make_request("post", Route.alignment + "/uploadAlignment", data)
 
 
-def train_retriever(name: str, corpus: str) -> None:
+def train_retriever(
+    name: str,
+    corpus: str,
+    target_compute: Optional[str] = None,
+    capacity_id: Optional[str] = None,
+) -> None:
     data = {"name": name, "corpus": corpus}
     return make_request("post", Route.train_model, data)
 
@@ -436,7 +441,7 @@ def start_deployment(
     target_instance: Optional[str] = None,
     openai_compatability: Optional[bool] = False,
     max_input_length: Optional[int] = 1024,
-    max_total_tokens: Optional[int] = 2048
+    max_total_tokens: Optional[int] = 2048,
 ) -> Dict[str, str]:
     data = {
         "deployment_name": deployment_name,
@@ -447,7 +452,7 @@ def start_deployment(
         "target_instance": target_instance,
         "openai_compatability": openai_compatability,
         "max_input_length": max_input_length,
-        "max_total_tokens": max_total_tokens
+        "max_total_tokens": max_total_tokens,
     }
     return make_request("post", Route.deployment + "/startDeployment", data)
 
@@ -491,6 +496,7 @@ def generate(
         "top_p": top_p,
     }
     return make_request("post", Route.deployment + "/generate", data)
+
 
 def embed(model_name: str, query: str) -> Dict[str, str]:
     data = {"model_name": model_name, "query": query}
