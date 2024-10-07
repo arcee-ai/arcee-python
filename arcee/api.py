@@ -346,6 +346,7 @@ def corpus_status(corpus: str) -> Dict[str, str]:
 
     return make_request("post", Route.pretraining + "/corpus/status", data)
 
+
 def start_alignment(
     alignment_name: str,
     qa_set: Optional[str] = None,
@@ -538,15 +539,15 @@ def start_evaluation(
     evaluations_name: str,
     eval_type: Optional[str] = None,
     qa_set_name: Optional[str] = None,
-    deployment_model: Optional[Dict[str, Optional[str]]] = None,
-    reference_model: Optional[Dict[str, Optional[str]]] = None,
-    judge_model: Optional[Dict[str, Optional[str]]] = None,
+    deployment_model: Optional[Dict[str, Any]] = None,
+    reference_model: Optional[Dict[str, Any]] = None,
+    judge_model: Optional[Dict[str, Any]] = None,
     model_type: Optional[str] = "arcee",
     model_args: Optional[str] = None,
     tasks_list: Optional[List[str]] = None,
     target_compute: Optional[str] = None,
     capacity_id: Optional[str] = None,
-    batch_size: Optional[int] = None
+    batch_size: Optional[int] = None,
 ) -> Dict[str, str]:
     """
     Start an evaluation job.
@@ -582,23 +583,27 @@ def start_evaluation(
         evaluations_name (str): The name of the evaluation job.
         eval_type (Optional[str]): The type of evaluation, e.g., "llm_as_a_judge" or "lm-eval".
         qa_set_name (Optional[str]): The name of the QA set being evaluated.
-        deployment_model (Optional[Dict[str, Optional[str]]]): Configuration for the deployment model.
-        reference_model (Optional[Dict[str, Optional[str]]]): Configuration for the reference model.
-        judge_model (Optional[Dict[str, Optional[str]]]): Configuration for the judge model.
+        deployment_model (Optional[Dict[str, Any]]): Configuration for the deployment model.
+        reference_model (Optional[Dict[str, Any]]): Configuration for the reference model.
+        judge_model (Optional[Dict[str, Any]]): Configuration for the judge model.
         model_type (Optional[str]): The type of the model, default is "arcee".
         model_args (Optional[str]): Model arguments to be fed into lm-eval harness.
-        tasks_list (Optional[List[str]]): List of tasks for the evaluation. See https://github.com/EleutherAI/lm-evaluation-harness/blob/main/lm_eval/tasks/README.md for more information.
+        tasks_list (Optional[List[str]]): List of tasks for the evaluation.
+            See https://github.com/EleutherAI/lm-evaluation-harness/blob/main/lm_eval/tasks/README.md
+            for more information.
         target_compute (Optional[str]): The name of the compute instance to use, default is "p3.2xlarge".
         capacity_id (Optional[str]): The name of the capacity block ID to use.
         batch_size (Optional[int]): Batch size for evaluation.
+    Returns:
+        Dict[str, str]: A dictionary containing a success message, evaluations name, and evaluations ID.
     """
 
-    data = {
+    data: Dict[str, Any] = {
         "action": "start",
         "evaluations_name": evaluations_name,
         "model_type": model_type,
         "model_args": model_args,
-        "tasks_list": tasks_list if tasks_list else [],
+        "tasks_list": tasks_list or [],
         "target_compute": target_compute,
         "capacity_id": capacity_id,
         "batch_size": batch_size,
@@ -612,4 +617,29 @@ def start_evaluation(
     # Remove any keys with None values
     data = {k: v for k, v in data.items() if v is not None}
 
-    return make_request("post", Route.evaluation + "/start", data)
+    response = make_request("post", Route.evaluation + "/start", data)
+    return {
+        "message": response.get("message", "Starting evals..."),
+        "evaluations_name": response.get("evaluations_name", ""),
+        "evaluations_id": response.get("evaluations_id", ""),
+    }
+
+
+def get_evaluation_status(evaluation_id_or_name: str) -> Dict[str, Any]:
+    """
+    Retrieve the status and results of an evaluation job.
+
+    Args:
+        evaluation_id_or_name (str): The ID or name of the evaluation job.
+
+    Returns:
+        Dict[str, Any]: A dictionary containing the evaluation status and results.
+    """
+    response = make_request("get", f"{Route.evaluation}/{evaluation_id_or_name}")
+    return {
+        "name": response.get("name"),
+        "id": response.get("id"),
+        "processing_state": response.get("processing_state", ""),
+        "status": response.get("status", ""),
+        "evaluation_data": response.get("evaluation_data", {}),
+    }
