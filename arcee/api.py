@@ -329,7 +329,7 @@ def delete_corpus(corpus_name: str) -> Dict[str, str]:
         corpus (str): The name of the corpus to delete
     """
     data = {"corpus_name": corpus_name}
-    return make_request("post", Route.corpus + "/delete", data)
+    return make_request("delete", Route.corpus + "/delete", data)
 
 
 def corpus_status(corpus_id: str) -> Dict[str, str]:
