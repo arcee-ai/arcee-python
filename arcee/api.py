@@ -551,9 +551,20 @@ def start_evaluation(
     """
     Start an evaluation job.
 
+    To run lm-eval-harness benchmarks, the input should be in a format similar to:
+    {
+        "evaluations_name": "my_lm_eval_harness_test",
+        "eval_type": "lm-eval-harness",
+        "model_type": "arcee",  # or "hf" depending on your model
+        "model_args": "pretrained=my_model_name,use_accelerate=True",  # Adjust based on https://github.com/EleutherAI/lm-evaluation-harness
+        "tasks_list": ["hellaswag", "mmlu_stem"],  # List of tasks to evaluate
+    }
+
     LLM as a judge model config should be in a format similar to:
     deployment_model = {
-        "model_name": "arcee-model-name"
+        "model_name": "arcee_model_name",
+        "base_url": "https://app.arcee.ai/api/v2",
+        "api_key": f"{os.environ['ARCEE_API_KEY']}"
     }
     reference_model" = {
         "model_name": "claude-3-5-sonnet-20240620",
@@ -562,7 +573,7 @@ def start_evaluation(
     }
     judge_model = {
         "model_name": "gpt-4o",
-        "base_url": "https://api.openai.com/v1/",
+        "base_url": "https://api.openai.com/v1",
         "api_key": openai_api_key,
         "custom_prompt": "Evaluate which response better adheres to factual accuracy, clarity, and relevance."
     }
@@ -583,6 +594,7 @@ def start_evaluation(
     """
 
     data = {
+        "action": "start",
         "evaluations_name": evaluations_name,
         "model_type": model_type,
         "model_args": model_args,
@@ -600,4 +612,4 @@ def start_evaluation(
     # Remove any keys with None values
     data = {k: v for k, v in data.items() if v is not None}
 
-    return make_request("post", Route.evaluation + "/evaluation/start", data)
+    return make_request("post", Route.evaluation + "/start", data)
