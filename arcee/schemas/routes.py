@@ -15,3 +15,4 @@ class Route(StrEnum):
     deployment = "deployment"
     merging = "merging"
     retriever = "models"
+    corpus = "pretraining/corpus"
