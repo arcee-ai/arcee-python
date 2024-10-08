@@ -35,7 +35,7 @@ def upload_corpus_folder(corpus: str, s3_folder_url: str, tokenizer_name: str, b
         "block_size": block_size,
     }
 
-    return make_request("post", Route.pretraining + "/corpusUpload", data)
+    return make_request("post", Route.corpus, data)
 
 
 def upload_qa_pairs(
@@ -321,20 +321,18 @@ def merging_status(merging: str) -> Dict[str, str]:
     return make_request("get", Route.merging + "/status", data)
 
 
-def delete_corpus(corpus: str) -> Dict[str, str]:
+def delete_corpus(corpus_name: str) -> Dict[str, str]:
     """
     Delete a corpus
 
     Args:
         corpus (str): The name of the corpus to delete
     """
-
-    data = {"corpus_name": corpus}
-
-    return make_request("post", Route.pretraining + "/deleteCorpus", data)
+    data = {"corpus_name": corpus_name}
+    return make_request("delete", Route.corpus, data)
 
 
-def corpus_status(corpus: str) -> Dict[str, str]:
+def corpus_status(corpus_id: str) -> Dict[str, str]:
     """
     Check the status of a corpus
 
@@ -342,9 +340,7 @@ def corpus_status(corpus: str) -> Dict[str, str]:
         corpus (str): The name of the corpus to check the status
     """
 
-    data = {"corpus_name": corpus}
-
-    return make_request("post", Route.pretraining + "/corpus/status", data)
+    return make_request("get", Route.corpus + f"/status/{corpus_id}")
 
 
 def start_alignment(

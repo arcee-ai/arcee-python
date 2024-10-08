@@ -16,3 +16,4 @@ class Route(StrEnum):
     merging = "merging"
     retriever = "models"
     evaluation = "evaluation"
+    corpus = "pretraining/corpus"
