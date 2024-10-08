@@ -529,3 +529,113 @@ def download_weights(type: model_weight_types, id_or_name: str) -> Response:
     """
     route = type_to_weights_route[type].format(id_or_name=id_or_name)
     return nonjson_request("get", route, stream=True)
+
+
+def start_evaluation(
+    evaluations_name: str,
+    eval_type: Optional[str] = None,
+    qa_set_name: Optional[str] = None,
+    deployment_model: Optional[Dict[str, Any]] = None,
+    reference_model: Optional[Dict[str, Any]] = None,
+    judge_model: Optional[Dict[str, Any]] = None,
+    model_type: Optional[str] = "arcee",
+    model_args: Optional[str] = None,
+    tasks_list: Optional[List[str]] = None,
+    target_compute: Optional[str] = None,
+    capacity_id: Optional[str] = None,
+    batch_size: Optional[int] = None,
+) -> Dict[str, str]:
+    """
+    Start an evaluation job.
+
+    To run lm-eval-harness benchmarks, the input should be in a format similar to:
+    {
+        "evaluations_name": "my_lm_eval_harness_test",
+        "eval_type": "lm-eval-harness",
+        "model_type": "arcee",  # or "hf" depending on your model
+        "model_args": "pretrained=my_model_name,use_accelerate=True",  # Adjust based on https://github.com/EleutherAI/lm-evaluation-harness
+        "tasks_list": ["hellaswag", "mmlu_stem"],  # List of tasks to evaluate
+    }
+
+    LLM as a judge model config should be in a format similar to:
+    deployment_model = {
+        "model_name": "arcee_model_name",
+        "base_url": "https://app.arcee.ai/api/v2",
+        "api_key": f"{os.environ['ARCEE_API_KEY']}"
+    }
+    reference_model" = {
+        "model_name": "claude-3-5-sonnet-20240620",
+        "base_url": "https://api.anthropic.com/v1",
+        "api_key": anthropic_api_key
+    }
+    judge_model = {
+        "model_name": "gpt-4o",
+        "base_url": "https://api.openai.com/v1",
+        "api_key": openai_api_key,
+        "custom_prompt": "Evaluate which response better adheres to factual accuracy, clarity, and relevance."
+    }
+
+    Args:
+        evaluations_name (str): The name of the evaluation job.
+        eval_type (Optional[str]): The type of evaluation, e.g., "llm_as_a_judge" or "lm-eval".
+        qa_set_name (Optional[str]): The name of the QA set being evaluated.
+        deployment_model (Optional[Dict[str, Any]]): Configuration for the deployment model.
+        reference_model (Optional[Dict[str, Any]]): Configuration for the reference model.
+        judge_model (Optional[Dict[str, Any]]): Configuration for the judge model.
+        model_type (Optional[str]): The type of the model, default is "arcee".
+        model_args (Optional[str]): Model arguments to be fed into lm-eval harness.
+        tasks_list (Optional[List[str]]): List of tasks for the evaluation.
+            See https://github.com/EleutherAI/lm-evaluation-harness/blob/main/lm_eval/tasks/README.md
+            for more information.
+        target_compute (Optional[str]): The name of the compute instance to use, default is "p3.2xlarge".
+        capacity_id (Optional[str]): The name of the capacity block ID to use.
+        batch_size (Optional[int]): Batch size for evaluation.
+    Returns:
+        Dict[str, str]: A dictionary containing a success message, evaluations name, and evaluations ID.
+    """
+
+    data: Dict[str, Any] = {
+        "action": "start",
+        "evaluations_name": evaluations_name,
+        "model_type": model_type,
+        "model_args": model_args,
+        "tasks_list": tasks_list or [],
+        "target_compute": target_compute,
+        "capacity_id": capacity_id,
+        "batch_size": batch_size,
+        "eval_type": eval_type,
+        "qa_set_name": qa_set_name,
+        "deployment_model": deployment_model,
+        "reference_model": reference_model,
+        "judge_model": judge_model,
+    }
+
+    # Remove any keys with None values
+    data = {k: v for k, v in data.items() if v is not None}
+
+    response = make_request("post", Route.evaluation + "/start", data)
+    return {
+        "message": response.get("message", "Starting evals..."),
+        "evaluations_name": response.get("evaluations_name", ""),
+        "evaluations_id": response.get("evaluations_id", ""),
+    }
+
+
+def get_evaluation_status(evaluation_id_or_name: str) -> Dict[str, Any]:
+    """
+    Retrieve the status and results of an evaluation job.
+
+    Args:
+        evaluation_id_or_name (str): The ID or name of the evaluation job.
+
+    Returns:
+        Dict[str, Any]: A dictionary containing the evaluation status and results.
+    """
+    response = make_request("get", f"{Route.evaluation}/{evaluation_id_or_name}")
+    return {
+        "name": response.get("name"),
+        "id": response.get("id"),
+        "processing_state": response.get("processing_state", ""),
+        "status": response.get("status", ""),
+        "evaluation_data": response.get("evaluation_data", {}),
+    }

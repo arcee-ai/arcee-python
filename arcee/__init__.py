@@ -9,6 +9,7 @@ from arcee.api import (
     delete_corpus,
     deployment_status,
     generate,
+    get_evaluation_status,
     get_retriever_status,
     list_pretrainings,
     mergekit_evolve,
@@ -17,6 +18,7 @@ from arcee.api import (
     retrieve,
     start_alignment,
     start_deployment,
+    start_evaluation,
     start_pretraining,
     start_retriever_training,
     stop_deployment,
@@ -59,4 +61,6 @@ __all__ = [
     "deployment_status",
     "merging_status",
     "alignment_status",
+    "start_evaluation",
+    "get_evaluation_status",
 ]
